@@ -833,10 +833,6 @@ public:
      *  @return ValueIterator&
      */
     iterator& end() const;
-    /* const {
-        std::cout <<"\nstart end \n";
-        return iterator::null;
-    }*/
 
 
 protected:

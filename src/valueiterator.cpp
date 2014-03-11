@@ -14,12 +14,6 @@
 namespace Php {
 
 /**
- *  
- *  
- */
-//ValueIterator ValueIterator::null;
-
-/**
  *  Constructor ValueIterator
  *  @param  arr HashTable
  */
@@ -51,12 +45,13 @@ void ValueIterator::setPair() {
     // required variable (array value)
     zval **value;
 
-    // retrieve data, and add to result
-    zend_hash_get_current_data(_arr, (void **) &value);
-
     // check Value type
     if (_isArray)
     {
+        
+        // retrieve data, and add to result
+        zend_hash_get_current_data(_arr, (void **) &value);
+
         // check key type
         if (HASH_KEY_IS_STRING == hash_key_type) {
             _pair.isString = true;
@@ -65,44 +60,29 @@ void ValueIterator::setPair() {
 
         } else {
             _pair.isString = false;
-            //_pair._key     = std::to_string(ind);
             _pair._key     = "";
             _pair._ind     = ind;
         }
-
-        //_pair._value = std::move(Value(*value));
-        //zval_add_ref(value);
-        //_pair._value = Value(*value);
         _pair._value = value;
-        //_pair._value = (void **)&value;
     }
-    /*
     else
     {
-            // check the type
-            switch (hash_key_type) {
-            
-            // was it a string?
-            case HASH_KEY_IS_STRING:
+        // inaccessible properties (privates) start with a null character
+        if (*key == '\0') {
+            nextIteration();
+            setPair();
+            return;
+        }
 
-                // inaccessible properties (privates) start with a null character
-                if (*key == '\0') break;
+        // retrieve data, and add to result
+        zend_hash_get_current_data(_arr, (void **) &value);
 
-                // required variable
-                zval **value;
-
-                // retrieve data, and add to result
-                zend_hash_get_current_data(_arr, (void **) &value);
-                result[key] = Value(*value);
-                break;
-                
-            default:
-            
-                // we're ready
-                return result;
-            }
+        // fill pair
+        _pair.isString = true;
+        _pair._key     = key;
+        _pair._ind     = 0;
+        _pair._value = value;
     }
-    */
 
 }
 

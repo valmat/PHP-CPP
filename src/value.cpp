@@ -278,9 +278,6 @@ Value::~Value()
 {
     // ignore if moved
     if (!_val) return;
-    //std::cout << "i:"<< _val << std::endl;
-    //std::cout << " del("<< _val->value.lval <<" | "<< _val->value.str.val <<"["<< _val->value.str.len <<"]) "<< std::endl;
-    
     
     // if there were two references or less, we're going to remove a reference
     // and only one reference will remain, the object will then impossible be
@@ -1582,8 +1579,6 @@ std::map<std::string,Php::Value> Value::mapValue() const
  *  @return ValueIterator&
  */
 Value::iterator& Value::begin() {
-    //std::cout <<"\nstart begin \n";
-    
     // check type
     if (isArray())
     {
@@ -1606,16 +1601,19 @@ Value::iterator& Value::begin() {
     return iterator::null;
 }
 
+/**
+ *  Empty iterator. Used to finish the iterations
+ *  @var ValueIterator
+ */
 ValueIterator ValueIterator::null;
+
 /**
  *  Iterator to end
  *  @return ValueIterator&
  */
 Value::iterator& Value::end() const {
-    //std::cout <<"\nstart end \n";
     return Value::iterator::null;
 }
-
 
 
 /**

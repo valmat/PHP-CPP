@@ -21,12 +21,7 @@ namespace Php {
 class ValuePair
 {
 private:
-    ValuePair(): _ind(0), _key(""), isString(false)
-    , _value(nullptr) 
-    //, _value(0) 
-    {
-        //_value.setType(Type::Null);
-    };
+
 
     //ValuePair(unsigned long i, std::string k, Value v, bool type = true): _ind(i), _key(k), _value(v), isString(type)  {};
     //ValuePair(unsigned long i, const char* k, Value v, bool type = true): _ind(i), _key(k), _value(v), isString(type)  {};
@@ -44,39 +39,52 @@ private:
     }
     */
 public:
-    //~ValuePair() = default;
 
+    //return _value;
     Value value() const {
-        //return _value;
         return Value(*_value);
-        //return Value(_value);
     }
 
+    //return string key
     std::string key() const {
-        //return _key;
-        return isString ? _key : std::to_string(_ind).c_str();
+        return isString ? _key : std::to_string(_ind);
     }
 
+    //return integer key (index)
     unsigned long ind() const {
         return _ind;
     }
 
+    // key type is string?
     bool isstr() const {
         return isString;
     }
 
+    // debug function.
     const char *typestr() const {return isString ? "str" : "num";}
 
 private:
+    
+    /**
+     *  Constructor.
+     *  only ValueIterator can create object of ValuePair
+     */
+    ValuePair(): _ind(0), _key(""), isString(false), _value(nullptr) {}
+
+    /**
+     *  Reset to empty.
+     *  If ValuePair oject is empty, then the containing it ValueIterator object == ValueIterator::null
+     */
     void reset() {
         _ind = 0;
         _key = "";
     }
 
     unsigned long _ind;
-    //std::string   _key;
+    
     const char*   _key;
-    //Value         _value;
+
+    //zval** _value;
     struct _zval_struct** _value;
 
     // key type is string?

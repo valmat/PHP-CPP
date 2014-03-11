@@ -86,7 +86,6 @@ public:
         return !operator==(rhs);
     }
 
-    //explicit T& operator*() {return *p;}
     ValuePair& operator*() {
         return _pair;
     }
@@ -98,25 +97,28 @@ public:
     static ValueIterator null;
 
 private:
+    
     /**
      *  Retrieving data from `HashTable arr` and filling in the `ValuePair _pair`
      */
     void setPair();
+
     /**
      *  next iteration
      */
     void nextIteration();
     
-
+    // ValueIterator always used through ValuePair
     ValuePair _pair;
 
+    // get access to the hast table (HashTable)
     _hashtable *_arr;
+
+    // is Array? (true -- yes, false -- no, is Object)
     bool _isArray;
 
     
 };
-//extern ValueIterator ValueIterator::null;
-
 
 /**
  *  End of namespace
