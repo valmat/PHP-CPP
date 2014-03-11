@@ -278,6 +278,9 @@ Value::~Value()
 {
     // ignore if moved
     if (!_val) return;
+    //std::cout << "i:"<< _val << std::endl;
+    //std::cout << " del("<< _val->value.lval <<" | "<< _val->value.str.val <<"["<< _val->value.str.len <<"]) "<< std::endl;
+    
     
     // if there were two references or less, we're going to remove a reference
     // and only one reference will remain, the object will then impossible be
@@ -287,6 +290,9 @@ Value::~Value()
     // destruct the zval (this function will decrement the reference counter,
     // and only destruct if there are no other references left)
     zval_ptr_dtor(&_val);
+
+    // delete ValueIterator pointer
+    if(_iterator) delete _iterator;
 }
 
 /**
@@ -1570,6 +1576,47 @@ std::map<std::string,Php::Value> Value::mapValue() const
     // done
     return result;
 }
+
+/**
+ *  Iterator to beginning
+ *  @return ValueIterator&
+ */
+Value::iterator& Value::begin() {
+    //std::cout <<"\nstart begin \n";
+    
+    // check type
+    if (isArray())
+    {
+        // get access to the hast table
+        HashTable *arr = Z_ARRVAL_P(_val);
+        
+        // return iterator
+        return *(_iterator = new iterator(arr, true));
+    }
+    else if (isObject())
+    {
+        // get access to the hast table
+        HashTable *arr = Z_OBJ_HT_P(_val)->get_properties(_val);
+
+        // return iterator
+        return *(_iterator = new iterator(arr, false));
+    }
+
+    // for no-iterable types
+    return iterator::null;
+}
+
+ValueIterator ValueIterator::null;
+/**
+ *  Iterator to end
+ *  @return ValueIterator&
+ */
+Value::iterator& Value::end() const {
+    //std::cout <<"\nstart end \n";
+    return Value::iterator::null;
+}
+
+
 
 /**
  *  Does the array contain a certain index?
