@@ -1,8 +1,8 @@
 /**
  *  valuepair.h
  *
- *  
- *  
+ *  ValuePair is a simple type that is used only in conjunction with ValueIterator.
+ *  Intended for obtaining access to the keys, values, and types of key variable of type Value during iteration
  *
  *  @copyright 2013 Copernica BV
  */
@@ -15,29 +15,10 @@
 namespace Php {
 
 /**
- *  
- *  
+ *  Class definition
  */
 class ValuePair
 {
-private:
-
-
-    //ValuePair(unsigned long i, std::string k, Value v, bool type = true): _ind(i), _key(k), _value(v), isString(type)  {};
-    //ValuePair(unsigned long i, const char* k, Value v, bool type = true): _ind(i), _key(k), _value(v), isString(type)  {};
-    //ValuePair(unsigned long i, const char* k, void ** v, bool type = true): _ind(i), _key(k), _value(v), isString(type)  {};
-
-
-    /*
-    ValuePair(const ValuePair& that) : _ind(that._ind) {}
-    ValuePair(ValuePair&& that) : _ind(std::move(that._ind)) {}
-    ValuePair &operator=(const ValuePair& that) {
-        _ind = that._ind;
-    }
-    ValuePair &operator=(ValuePair&& that) {
-        _ind = std::move(that._ind);
-    }
-    */
 public:
 
     //return _value;
@@ -69,7 +50,7 @@ private:
      *  Constructor.
      *  only ValueIterator can create object of ValuePair
      */
-    ValuePair(): _ind(0), _key(""), isString(false), _value(nullptr) {}
+    ValuePair(): _ind(0), _key(""), isString(true), _value(nullptr) {}
 
     /**
      *  Reset to empty.

@@ -1,8 +1,8 @@
 /**
  *  valueiterator.cpp
  *
- *  
- *  
+ *  ValueIterator - designed for natural iteration objects and arrays of type Value. 
+ *  it does not use STL containers and carries minimal overhead.
  *
  *  @copyright 2013 Copernica BV
  */
@@ -68,7 +68,7 @@ void ValueIterator::setPair() {
     else
     {
         // inaccessible properties (privates) start with a null character
-        if (*key == '\0') {
+        if ('\0' == *key) {
             nextIteration();
             setPair();
             return;

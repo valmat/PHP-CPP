@@ -1,8 +1,8 @@
 /**
  *  valueiterator.h
  *
- *  
- *  
+ *  ValueIterator - designed for natural iteration objects and arrays of type Value. 
+ *  it does not use STL containers and carries minimal overhead.
  *
  *  @copyright 2013 Copernica BV
  */
@@ -20,13 +20,16 @@ struct _hashtable;
 namespace Php {
 
 /**
- *  
- *  
+ *  Class definition
  */
 class ValueIterator
 {
 public:
     
+    /**
+     *  Constructor for empty ValueIterator.
+     *  Used only for build ValueIterator::null
+     */
     ValueIterator() {
         _pair.reset();
     }
@@ -47,22 +50,6 @@ public:
      */
     ValueIterator(ValueIterator&& that) :  _arr(std::move(that._arr)), _pair(std::move(that._pair)), _isArray(that._isArray) {}
 
-
-
-    /*
-    ValueIterator &operator=(ValueIterator &&that) {
-        if (this == &that) return *this;
-        p = that.p;
-        return *this;
-    }
-    ValueIterator &operator=(const ValueIterator &that) {
-        if (this == &that) return *this;
-        p = that.p;
-        that.p = nullptr;
-        return *this;
-    }
-    */
-
     /**
      *  Increment operator
      */
@@ -79,7 +66,7 @@ public:
     }
 
     bool operator==(const ValueIterator& rhs) const {
-        return (_pair._ind == rhs._pair._ind && _pair._key==rhs._pair._key );
+        return (_pair._ind == rhs._pair._ind && _pair._key == rhs._pair._key );
     }
 
     bool operator!=(const ValueIterator& rhs) const {
@@ -94,10 +81,11 @@ public:
         return &_pair;
     }
 
+    // Empty iterator. Used to finish the iterations
     static ValueIterator null;
 
 private:
-    
+
     /**
      *  Retrieving data from `HashTable arr` and filling in the `ValuePair _pair`
      */
@@ -114,9 +102,8 @@ private:
     // get access to the hast table (HashTable)
     _hashtable *_arr;
 
-    // is Array? (true -- yes, false -- no, is Object)
+    // is Array? (true — yes, false — no, is Object)
     bool _isArray;
-
     
 };
 
