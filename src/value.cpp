@@ -288,6 +288,7 @@ Value::~Value()
     // and only destruct if there are no other references left)
     zval_ptr_dtor(&_val);
 
+    //std::cout << "\x1b[0;35m\n Value::~Value() \n\x1b[0m";
     // delete ValueIterator pointer
     if(_iterator) delete _iterator;
 }
@@ -1578,7 +1579,93 @@ std::map<std::string,Php::Value> Value::mapValue() const
  *  Iterator to beginning
  *  @return ValueIterator&
  */
+/*
 Value::iterator& Value::begin() {
+    
+    if(_iterator) return *_iterator;
+
+    // check type
+    if (isArray())
+    {
+        // get access to the hast table
+        HashTable *arr = Z_ARRVAL_P(_val);
+        
+        // return iterator
+        _iterator = new iterator(arr, true);
+    }
+    else if (isObject())
+    {
+        // get access to the hast table
+        HashTable *arr = Z_OBJ_HT_P(_val)->get_properties(_val);
+
+        // return iterator
+        _iterator = new iterator(arr, false);
+    }
+    else
+    {
+        // for no-iterable types
+        _iterator = &iterator::null;
+    }
+
+    return *_iterator;
+}
+*/
+/*
+Value::iterator& Value::begin() {
+    // check type
+    if (isArray())
+    {
+        // get access to the hast table
+        HashTable *arr = Z_ARRVAL_P(_val);
+        
+        // return iterator
+        return *(_iterator = new iterator(arr, true));
+    }
+    else if (isObject())
+    {
+        // get access to the hast table
+        HashTable *arr = Z_OBJ_HT_P(_val)->get_properties(_val);
+
+        // return iterator
+        return *(_iterator = new iterator(arr, false));
+    }
+
+    // for no-iterable types
+    return iterator::null;
+}
+*/
+/*
+Value::iterator& Value::begin() {
+    // check type
+    if (isArray())
+    {
+        // get access to the hast table
+        HashTable *arr = Z_ARRVAL_P(_val);
+        
+        // return iterator
+        return iterator(arr, true);
+    }
+    else if (isObject())
+    {
+        // get access to the hast table
+        HashTable *arr = Z_OBJ_HT_P(_val)->get_properties(_val);
+
+        // return iterator
+        return iterator(arr, false);
+    }
+
+    // for no-iterable types
+    return iterator::null;
+}
+*/
+Value::iterator& Value::begin() {
+    
+    // if already exist
+    if(_iterator) {
+       _iterator->reset();
+       return *_iterator;
+    }
+
     // check type
     if (isArray())
     {

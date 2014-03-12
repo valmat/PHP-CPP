@@ -32,6 +32,7 @@ public:
      */
     ValueIterator() {
         _pair.reset();
+        //std::cout << "\x1b[1;31m\n ValueIterator() \n\x1b[0m";
     }
 
     /**
@@ -43,12 +44,17 @@ public:
     /**
      *  Copy Constructor
      */
-    ValueIterator(const ValueIterator& that) : _arr(that._arr), _pair(that._pair), _isArray(that._isArray) {}
+    ValueIterator(const ValueIterator& that) : _arr(that._arr), _pair(that._pair), _isArray(that._isArray) {std::cout << "\x1b[1;32m\n Copy ValueIterator \n\x1b[0m";}
 
     /**
      *  Move Constructor
      */
-    ValueIterator(ValueIterator&& that) :  _arr(std::move(that._arr)), _pair(std::move(that._pair)), _isArray(that._isArray) {}
+    ValueIterator(ValueIterator&& that) :  _arr(std::move(that._arr)), _pair(std::move(that._pair)), _isArray(that._isArray) {std::cout << "\x1b[1;35m\n Move ValueIterator \n\x1b[0m";}
+
+    ~ValueIterator() {
+        //std::cout << "\n\n ~ValueIterator \n\n";
+        std::cout << "\x1b[0;31m\n ~ValueIterator \n\x1b[0m";
+    }
 
     /**
      *  Increment operator
@@ -81,8 +87,11 @@ public:
         return &_pair;
     }
 
+    void reset();
+    
     // Empty iterator. Used to finish the iterations
     static ValueIterator null;
+
 
 private:
 
