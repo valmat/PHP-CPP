@@ -30,9 +30,9 @@ public:
      *  Constructor for empty ValueIterator.
      *  Used only for build ValueIterator::null
      */
-    ValueIterator() {
+    ValueIterator() 
+    {
         _pair.reset();
-        //std::cout << "\x1b[1;31m\n ValueIterator() \n\x1b[0m";
     }
 
     /**
@@ -44,17 +44,14 @@ public:
     /**
      *  Copy Constructor
      */
-    ValueIterator(const ValueIterator& that) : _arr(that._arr), _pair(that._pair), _isArray(that._isArray) {std::cout << "\x1b[1;32m\n Copy ValueIterator \n\x1b[0m";}
+    ValueIterator(const ValueIterator& that) : _arr(that._arr), _pair(that._pair), _isArray(that._isArray) {}
 
     /**
      *  Move Constructor
      */
-    ValueIterator(ValueIterator&& that) :  _arr(std::move(that._arr)), _pair(std::move(that._pair)), _isArray(that._isArray) {std::cout << "\x1b[1;35m\n Move ValueIterator \n\x1b[0m";}
+    ValueIterator(ValueIterator&& that) :  _arr(std::move(that._arr)), _pair(std::move(that._pair)), _isArray(that._isArray) {}
 
-    ~ValueIterator() {
-        //std::cout << "\n\n ~ValueIterator \n\n";
-        std::cout << "\x1b[0;31m\n ~ValueIterator \n\x1b[0m";
-    }
+    ~ValueIterator() {}
 
     /**
      *  Increment operator
@@ -87,8 +84,11 @@ public:
         return &_pair;
     }
 
+    /**
+     *  reset iterator to beginning of the hash table
+     */
     void reset();
-    
+
     // Empty iterator. Used to finish the iterations
     static ValueIterator null;
 
