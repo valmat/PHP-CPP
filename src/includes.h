@@ -47,6 +47,7 @@
 #include "../include/type.h"
 #include "../include/value.h"
 #include "../include/valuepair.h"
+#include "../include/htwrapper.h"
 #include "../include/valueiterator.h"
 #include "../include/array.h"
 #include "../include/object.h"
