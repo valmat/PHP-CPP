@@ -43,7 +43,6 @@ public:
     HashMember &operator=(const Value &value)
     {
         // set property in parent array
-        std::cout << "\x1b[0;32m\n HashMember &operator: .set("<<_index<<", "<<value<<") \n\x1b[0m";
         _base.set(_index, value);
 
         // if there is a parent, it should sets its value too

@@ -207,7 +207,6 @@ Value::Value(Base *object)
  */
 Value::Value(const Value &that)
 {
-    std::cout << "\x1b[0;33m\n Copy constructor Value() \n\x1b[0m";
     // is the other variable a reference?
     if (Z_ISREF_P(that._val))
     {
@@ -1799,7 +1798,6 @@ const Value &Value::set(int index, const Value &value)
  */
 const Value &Value::setRaw(const char *key, int size, const Value &value)
 {
-    std::cout << "\n\x1b[0;31m " << key << " | "  <<  value <<  " \x1b[0m\n";
     // is this an object?
     if (isObject())
     {
@@ -1817,27 +1815,12 @@ const Value &Value::setRaw(const char *key, int size, const Value &value)
         // if this is not a reference variable, we should detach it to implement copy on write
         SEPARATE_ZVAL_IF_NOT_REF(&_val);
 
-        std::cout << "\n\x1b[0;36m ====" << Z_ARRVAL_P(_val)->nNumOfElements << " | " << Z_ARRVAL_P(_val)->nTableSize << " \x1b[0m\n";
-
         // add the value (this will reduce the refcount of the current value)
-        //add_assoc_zval_ex(_val, key, size+1, value._val);
-        std::cout << "\n\x1b[0;31m ~~~~" << add_assoc_zval_ex(_val, key, size+1, value._val) <<  " \x1b[0m\n";
-        //std::cout << "\n\x1b[0;34m ~~~~" << zend_hash_update(Z_ARRVAL_P(_val), key, size+1, (void **)&value._val, sizeof(zval *), NULL) <<  " \x1b[0m\n";
-        //std::cout << "\n\x1b[0;34m ~~~~" << zend_hash_add(Z_ARRVAL_P(_val), key, size+1, (void **)&value._val, sizeof(zval *), NULL) <<  " \x1b[0m\n";
-
-        //std::cout << "\n\x1b[0;34m ~~~~" << zend_hash_add_empty_element(Z_ARRVAL_P(_val), key, size+1) <<  " \x1b[0m\n";
-            
-            
-
-         
-        std::cout << "\n\x1b[0;31m ====" << Z_ARRVAL_P(_val)->nNumOfElements << " | " << Z_ARRVAL_P(_val)->nTableSize << " \x1b[0m\n";
-            
+        add_assoc_zval_ex(_val, key, size+1, value._val);
 
         // the variable has one more reference (the array entry)
         Z_ADDREF_P(value._val);
     }
-
-    std::cout << "\n\x1b[0;33m value.size() = " << value.size() << " \x1b[0m\n";
 
     // done
     return value;
