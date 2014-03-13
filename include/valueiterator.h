@@ -51,8 +51,6 @@ public:
      */
     ValueIterator(ValueIterator&& that) :  _arr(std::move(that._arr)), _pair(std::move(that._pair)), _isArray(that._isArray) {}
 
-    ~ValueIterator() {}
-
     /**
      *  Increment operator
      */
@@ -91,7 +89,6 @@ public:
 
     // Empty iterator. Used to finish the iterations
     static ValueIterator null;
-
 
 private:
 
