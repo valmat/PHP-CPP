@@ -30,9 +30,7 @@ public:
      *  Constructor HashItemObject
      *  @param  arr HashTable
      */
-    explicit HashItemObject(_hashtable *arr) : HashPos(arr) {
-        std::cout << "\x1b[0;34m\n HashItemObject(_hashtable *arr) \n\x1b[0m";
-    }
+    explicit HashItemObject(_hashtable *arr) : HashPos(arr) {}
 
     /**
      *  retrieve data value
@@ -71,7 +69,6 @@ public:
      */
     virtual bool isstr() const override
     {
-        //std::cout << "\x1b[0;34m\n isstr \n\x1b[0m";
         return HashPos.isstr();
     }
 
@@ -80,7 +77,6 @@ public:
      */
     virtual bool isEmpty() const override
     {
-        std::cout << "\x1b[0;34m\n isEmpty : "<< (HashPos.isEmpty() ? "y" : "n") <<" \n\x1b[0m";
         return HashPos.isEmpty();
     }
 
@@ -89,7 +85,6 @@ public:
      */
     virtual void next() override
     {
-        std::cout << "\x1b[0;34m\n next \n\x1b[0m";
         HashPos.next();
         // check access rights to the current item
         checkAccess();
@@ -108,7 +103,7 @@ public:
      */
     virtual void reset() override
     {
-        std::cout << "\x1b[0;34m\n reset \n\x1b[0m";
+        
         HashPos.toBegin();
         // After a reset key positions verifiable access rights to the first item
         checkAccess();
@@ -120,10 +115,7 @@ public:
     //virtual bool compare(const HashItem& rhs) const override
     virtual bool compare(const HashItem *rhs) const override
     {
-        std::cout << "\x1b[0;34m\n HashItemObject::compare \n\x1b[0m";
-        //return (HashPos == ((HashItemObject *)&rhs)->HashPos);
         return (HashPos == ((HashItemObject *)rhs)->HashPos);
-        //return (HashPos == rhs->HashPos);
     }
 
     virtual ~HashItemObject() {};
@@ -135,7 +127,6 @@ private:
      */
     void checkAccess()
     {
-        //std::cout << "\x1b[0;34m\n checkAccess {"<<HashPos.ind()<<" | "<<HashPos.key()<<"} \n\x1b[0m";
         if ( !HashPos.isEmpty() && !HashPos.keyAccessible() ) next();
     }
     

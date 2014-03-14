@@ -30,9 +30,7 @@ public:
      *  Constructor HashItemArray
      *  @param  arr HashTable
      */
-    explicit HashItemArray(_hashtable *arr) : HashPos(arr) {
-        std::cout << "\x1b[0;34m\n HashItemArray(_hashtable *arr) \n\x1b[0m";
-    }
+    explicit HashItemArray(_hashtable *arr) : HashPos(arr) {}
 
     /**
      *  retrieve data value

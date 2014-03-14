@@ -1578,7 +1578,6 @@ std::map<std::string,Php::Value> Value::mapValue() const
  *  Iterator to beginning
  *  @return ValueIterator&
  */
-//Value::iterator& Value::begin()
 Value::iterator Value::begin()
 {
     
@@ -1594,9 +1593,6 @@ Value::iterator Value::begin()
         // get access to the hast table
         HashTable *arr = Z_ARRVAL_P(_val);
         
-        // return iterator
-        //return *(_iterator = new iterator(arr, true));
-        //return *(_iterator = new iterator(arr));
         return (_hashitem = new HashItemArray(arr));
     }
     else if (isObject())
@@ -1604,32 +1600,19 @@ Value::iterator Value::begin()
         // get access to the hast table
         HashTable *arr = Z_OBJ_HT_P(_val)->get_properties(_val);
 
-        // return iterator
-        //return *(_iterator = new iterator(arr, false));
-        //return *(_iterator = new iterator(arr));
         return (_hashitem = new HashItemObject(arr));
-        //return (_hashitem = new HashItemArray(arr));
     }
 
     // for no-iterable types
-    //return iterator::null;
     return nullptr;
 }
-
-/**
- *  Empty iterator. Used to finish the iterations
- *  @var ValueIterator
- */
-//Value::iterator Value::iterator::null;
 
 /**
  *  Iterator to end
  *  @return ValueIterator&
  */
-//Value::iterator& Value::end() const
 Value::iterator Value::end() const 
 {
-    //return Value::iterator::null;
     return nullptr;
 }
 

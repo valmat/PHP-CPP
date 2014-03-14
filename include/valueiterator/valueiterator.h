@@ -23,12 +23,9 @@ public:
     
     /**
      *  Constructor for empty ValueIterator.
-     *  Used only for build ValueIterator::null
+     *  Used to finish the iterations
      */
-    ValueIterator(std::nullptr_t n) : phItem(nullptr) {
-        std::cout << "\x1b[0;31m\n ValueIterator(std::nullptr_t n) \n\x1b[0m";
-    }
-    //Value(std::nullptr_t value);
+    ValueIterator(std::nullptr_t n) : phItem(nullptr) {}
 
     /**
      *  Constructor ValueIterator
@@ -36,7 +33,6 @@ public:
      */
     ValueIterator(HashItem *phi): phItem(phi)
     {
-        std::cout << "\x1b[0;31m\n ValueIterator(HashItem *phi) \n\x1b[0m";
         phi->reset();
     }
 
@@ -54,7 +50,6 @@ public:
      *  Increment prefix operator
      */
     ValueIterator& operator++() {
-        //std::cout << "\x1b[0;31m\n ValueIterator& operator++() \n\x1b[0m";
         phItem->next();
         return *this;
     }
@@ -72,8 +67,6 @@ public:
      *  compare operator
      */
     bool operator==(const ValueIterator& rhs) const {
-    //bool operator==(ValueIterator& rhs) const {
-        std::cout << "\x1b[0;35m\n ValueIterator::compare \n\x1b[0m";
         // If one of items is empty
         // The order of the following tests is optimized. Do not change it.
         if(!isEmpty() &&  rhs.isEmpty() ) return false;
@@ -81,7 +74,6 @@ public:
         if( isEmpty() && !rhs.isEmpty() ) return false;
 
         // If both are not empty
-        std::cout << "\x1b[0;35m\n phItem->compare(rhs.phItem) .... \x1b[0m";
         return phItem->compare(rhs.phItem);
     }
 
@@ -105,12 +97,6 @@ public:
         phItem->reset();
     }
     */
-
-    //virtual 
-    ~ValueIterator() {std::cout << "\x1b[0;32m\n ~ValueIterator() \n\x1b[0m";}
-
-    // Empty iterator. Used to finish the iterations
-    //static ValueIterator null;
 
 private:
 
