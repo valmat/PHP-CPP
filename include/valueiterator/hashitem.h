@@ -73,7 +73,7 @@ public:
      *  compare operator
      */
     //virtual bool compare(const HashItem& rhs) const;
-    virtual bool compare(const HashItem *rhs) const;
+    virtual bool compare(const HashItem *rhs) const = 0;
 
     virtual ~HashItem() = 0;
 };
