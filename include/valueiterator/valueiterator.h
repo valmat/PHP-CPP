@@ -54,7 +54,7 @@ public:
      *  Increment prefix operator
      */
     ValueIterator& operator++() {
-        std::cout << "\x1b[0;31m\n ValueIterator& operator++() \n\x1b[0m";
+        //std::cout << "\x1b[0;31m\n ValueIterator& operator++() \n\x1b[0m";
         phItem->next();
         return *this;
     }
@@ -73,12 +73,15 @@ public:
      */
     bool operator==(const ValueIterator& rhs) const {
     //bool operator==(ValueIterator& rhs) const {
+        std::cout << "\x1b[0;35m\n ValueIterator::compare \n\x1b[0m";
         // If one of items is empty
+        // The order of the following tests is optimized. Do not change it.
+        if(!isEmpty() &&  rhs.isEmpty() ) return false;
         if( isEmpty() &&  rhs.isEmpty() ) return true;
         if( isEmpty() && !rhs.isEmpty() ) return false;
-        if(!isEmpty() &&  rhs.isEmpty() ) return false;
 
         // If both are not empty
+        std::cout << "\x1b[0;35m\n phItem->compare(rhs.phItem) .... \x1b[0m";
         return phItem->compare(rhs.phItem);
     }
 
@@ -103,7 +106,8 @@ public:
     }
     */
 
-    //virtual ~ValueIterator() {}
+    //virtual 
+    ~ValueIterator() {std::cout << "\x1b[0;32m\n ~ValueIterator() \n\x1b[0m";}
 
     // Empty iterator. Used to finish the iterations
     //static ValueIterator null;

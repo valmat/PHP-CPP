@@ -68,6 +68,12 @@ public:
     bool isstr() const;
 
     /**
+     *  Check the permissions of key.
+     *  It is used when the iteration of object.
+     */
+    bool keyAccessible() const;
+
+    /**
      *  is hashtable item is empty?
      */
     bool isEmpty() const {

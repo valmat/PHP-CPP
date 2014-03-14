@@ -75,6 +75,19 @@ bool HashPositionWrapper::isstr() const {
 }
 
 /**
+ *  Check the permissions of key.
+ *  It is used when the iteration of object.
+ */
+bool HashPositionWrapper::keyAccessible() const
+{
+    // Objects contain only string keys
+    // But the fields with private/protected access key name missing
+    // This hack and it might break in future versions of PHP.
+    // @todo It would be good to redo it using regular Zend functions.
+    return ( '\0' != *(pos->arKey) );
+}
+
+/**
  *  next iteration
  */
 void HashPositionWrapper::next() {

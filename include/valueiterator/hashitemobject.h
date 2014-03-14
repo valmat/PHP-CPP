@@ -1,12 +1,12 @@
 /**
- *  hashitemarray.h
+ *  hashitemobject.h
  *
- *  HashItemArray
+ *  HashItemObject
  *
  *  @copyright 2013 Copernica BV
  */
-#ifndef HASHITEMARRAY_H
-#define HASHITEMARRAY_H
+#ifndef HASHITEMOBJECT_H
+#define HASHITEMOBJECT_H
 
 /**
  *  Set up namespace
@@ -15,23 +15,23 @@ namespace Php {
 
 /**
  *  Class definition
- *  HashItemArray
+ *  HashItemObject
  */
-class HashItemArray : public HashItem
+class HashItemObject : public HashItem
 {
 public:
 
     /**
-     *  Constructor empty HashItemArray
+     *  Constructor empty HashItemObject
      */
-    //HashItemArray() : HashPos() {}
+    //HashItemObject() : HashPos() {}
 
     /**
-     *  Constructor HashItemArray
+     *  Constructor HashItemObject
      *  @param  arr HashTable
      */
-    explicit HashItemArray(_hashtable *arr) : HashPos(arr) {
-        std::cout << "\x1b[0;34m\n HashItemArray(_hashtable *arr) \n\x1b[0m";
+    explicit HashItemObject(_hashtable *arr) : HashPos(arr) {
+        std::cout << "\x1b[0;34m\n HashItemObject(_hashtable *arr) \n\x1b[0m";
     }
 
     /**
@@ -71,6 +71,7 @@ public:
      */
     virtual bool isstr() const override
     {
+        //std::cout << "\x1b[0;34m\n isstr \n\x1b[0m";
         return HashPos.isstr();
     }
 
@@ -79,6 +80,7 @@ public:
      */
     virtual bool isEmpty() const override
     {
+        std::cout << "\x1b[0;34m\n isEmpty : "<< (HashPos.isEmpty() ? "y" : "n") <<" \n\x1b[0m";
         return HashPos.isEmpty();
     }
 
@@ -87,7 +89,10 @@ public:
      */
     virtual void next() override
     {
+        std::cout << "\x1b[0;34m\n next \n\x1b[0m";
         HashPos.next();
+        // check access rights to the current item
+        checkAccess();
     }
 
     /**
@@ -103,7 +108,10 @@ public:
      */
     virtual void reset() override
     {
+        std::cout << "\x1b[0;34m\n reset \n\x1b[0m";
         HashPos.toBegin();
+        // After a reset key positions verifiable access rights to the first item
+        checkAccess();
     }
 
     /**
@@ -112,14 +120,24 @@ public:
     //virtual bool compare(const HashItem& rhs) const override
     virtual bool compare(const HashItem *rhs) const override
     {
-        //return (HashPos == ((HashItemArray *)&rhs)->HashPos);
-        return (HashPos == ((HashItemArray *)rhs)->HashPos);
+        std::cout << "\x1b[0;34m\n HashItemObject::compare \n\x1b[0m";
+        //return (HashPos == ((HashItemObject *)&rhs)->HashPos);
+        return (HashPos == ((HashItemObject *)rhs)->HashPos);
         //return (HashPos == rhs->HashPos);
     }
 
-    virtual ~HashItemArray() {};
+    virtual ~HashItemObject() {};
 
 private:
+
+    /**
+     *  Check the permissions of property. And move on to the next property, if access is denied.
+     */
+    void checkAccess()
+    {
+        //std::cout << "\x1b[0;34m\n checkAccess {"<<HashPos.ind()<<" | "<<HashPos.key()<<"} \n\x1b[0m";
+        if ( !HashPos.isEmpty() && !HashPos.keyAccessible() ) next();
+    }
     
     // Position in the internal hash table
     HashPositionWrapper HashPos;
@@ -129,4 +147,4 @@ private:
  *  End of namespace
  */
 }
-#endif /* hashitemarray.h */
+#endif /* hashitemobject.h */

@@ -1607,7 +1607,8 @@ Value::iterator Value::begin()
         // return iterator
         //return *(_iterator = new iterator(arr, false));
         //return *(_iterator = new iterator(arr));
-        return (_hashitem = new HashItemArray(arr));
+        return (_hashitem = new HashItemObject(arr));
+        //return (_hashitem = new HashItemArray(arr));
     }
 
     // for no-iterable types
