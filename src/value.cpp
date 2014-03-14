@@ -1594,7 +1594,8 @@ Value::iterator& Value::begin() {
         
         // return iterator
         //return *(_iterator = new iterator(arr, true));
-        return *(_iterator = new iterator(arr));
+        //return *(_iterator = new iterator(arr));
+        return *(_iterator = new ArrayIterator(arr));
     }
     else if (isObject())
     {
@@ -1603,7 +1604,8 @@ Value::iterator& Value::begin() {
 
         // return iterator
         //return *(_iterator = new iterator(arr, false));
-        return *(_iterator = new iterator(arr));
+        //return *(_iterator = new iterator(arr));
+        return *(_iterator = new ObjectIterator(arr));
     }
 
     // for no-iterable types
