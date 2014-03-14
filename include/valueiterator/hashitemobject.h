@@ -91,19 +91,10 @@ public:
     }
 
     /**
-     *  previous iteration
-     */
-    virtual void prev() override
-    {
-        HashPos.prev();
-    }
-
-    /**
      *  reset iterator to beginning of the hash table
      */
     virtual void reset() override
     {
-        
         HashPos.toBegin();
         // After a reset key positions verifiable access rights to the first item
         checkAccess();
