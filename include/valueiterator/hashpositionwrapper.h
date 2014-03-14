@@ -1,7 +1,7 @@
 /**
- *  htwrapper.h
+ *  hashpositionwrapper.h
  *
- *  HTwrapper
+ *  HashPositionWrapper
 
 
   is a simple type that is used only in conjunction with ValueIterator.
@@ -12,8 +12,8 @@
  *
  *  @copyright 2013 Copernica BV
  */
-#ifndef HTWRAPPER_H
-#define HTWRAPPER_H
+#ifndef HTPWRAPPER_H
+#define HTPWRAPPER_H
 
 /**
  *  Forward declaration
@@ -29,21 +29,22 @@ namespace Php {
 
 /**
  *  Class definition
+ *  HashPositionWrapper
  */
-class HTwrapper
+class HashPositionWrapper
 {
 public:
 
     /**
-     *  Constructor empty HTwrapper
+     *  Constructor empty HashPositionWrapper
      */
-    HTwrapper() : ht(nullptr), pos(nullptr) {}
+    HashPositionWrapper() : ht(nullptr), pos(nullptr) {}
 
     /**
-     *  Constructor HTwrapper
+     *  Constructor HashPositionWrapper
      *  @param  arr HashTable
      */
-    explicit HTwrapper(_hashtable *arr);
+    explicit HashPositionWrapper(_hashtable *arr);
 
     /**
      *  retrieve data value
@@ -96,7 +97,7 @@ public:
     /**
      *  compare operator
      */
-    bool operator==(const HTwrapper& rhs) const;
+    bool operator==(const HashPositionWrapper& rhs) const;
 
 
 
@@ -105,7 +106,7 @@ private:
     // Position in the internal hash table
     _HashPosition pos;
 
-    // get access to the hast table (HashTable)
+    // get access to the hast table (class HashTable)
     _hashtable *ht;
 };
 
@@ -113,4 +114,4 @@ private:
  *  End of namespace
  */
 }
-#endif /* htwrapper.h */
+#endif /* hashpositionwrapper.h */

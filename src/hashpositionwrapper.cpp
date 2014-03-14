@@ -1,7 +1,7 @@
 /**
- *  htwrapper.cpp
+ *  hashpositionwrapper.cpp
  *
- *  htwrapper - designed for natural iteration objects and arrays of type Value. 
+ *  HashPositionWrapper - designed for natural iteration objects and arrays of type Value. 
  *  it does not use STL containers and carries minimal overhead.
  *
  *  @copyright 2013 Copernica BV
@@ -15,10 +15,10 @@ namespace Php {
 
 
 /**
- *  Constructor HTwrapper
+ *  Constructor HashPositionWrapper
  *  @param  arr HashTable
  */
- HTwrapper::HTwrapper(_hashtable *arr) {
+ HashPositionWrapper::HashPositionWrapper(_hashtable *arr) {
     ht = arr;
     pos = arr->pInternalPointer;
  }
@@ -26,7 +26,7 @@ namespace Php {
 /**
  *  reset iterator to beginning of the hash table
  */
-void HTwrapper::toBegin()
+void HashPositionWrapper::toBegin()
 {
     zend_hash_internal_pointer_reset_ex(ht, &pos);
 }
@@ -34,7 +34,7 @@ void HTwrapper::toBegin()
 /**
  *  reset iterator to end of the hash table
  */
-void HTwrapper::toEnd()
+void HashPositionWrapper::toEnd()
 {
     zend_hash_internal_pointer_end_ex(ht, &pos);
 }
@@ -42,18 +42,20 @@ void HTwrapper::toEnd()
 /**
  *  retrieve data value
  */
-Value HTwrapper::value() const {
+Value HashPositionWrapper::value() const {
     //zval **value;
     //zend_hash_get_current_data_ex(ht, (void **) &value, &pos);
     //return Value(*value);
+
+    //zval_add_ref((zval **)pos->pData);
     return Value(*((zval **)pos->pData));
 }
 
 /**
  *  return string key
  */
-//const char * HTwrapper::key() const {
-std::string HTwrapper::key() const {
+//const char * HashPositionWrapper::key() const {
+std::string HashPositionWrapper::key() const {
     //return (0 == pos->nKeyLength) ? "" : pos->arKey;
     return (0 == pos->nKeyLength) ? std::to_string(pos->h) : std::string(pos->arKey, pos->nKeyLength);
 }
@@ -61,39 +63,41 @@ std::string HTwrapper::key() const {
 /**
  *  return integer key (index)
  */
-unsigned long HTwrapper::ind() const {
+unsigned long HashPositionWrapper::ind() const {
     return (0 == pos->nKeyLength) ? pos->h : 0;
 }
 
 /**
  *  key type is string?
  */
-bool HTwrapper::isstr() const {
+bool HashPositionWrapper::isstr() const {
     return (0 != pos->nKeyLength);
 }
 
 /**
  *  next iteration
  */
-void HTwrapper::next() {
+void HashPositionWrapper::next() {
     zend_hash_move_forward_ex(ht, &pos);
 }
 
 /**
  *  previous iteration
  */
-void HTwrapper::prev() {
+void HashPositionWrapper::prev() {
     zend_hash_move_backwards_ex(ht, &pos);
 }
 
 /**
  *  compare operator
  */
-bool HTwrapper::operator==(const HTwrapper& rhs) const {
+bool HashPositionWrapper::operator==(const HashPositionWrapper& rhs) const {
     // If one of items is empty
-    if( isEmpty() && rhs.isEmpty() )  return true;
+    /*
+    if( isEmpty() &&  rhs.isEmpty() ) return true;
     if( isEmpty() && !rhs.isEmpty() ) return false;
-    if(!isEmpty() && rhs.isEmpty() )  return false;
+    if(!isEmpty() &&  rhs.isEmpty() ) return false;
+    */
 
     // If both are not empty
     return (pos->h == rhs.pos->h && pos->nKeyLength == rhs.pos->nKeyLength && pos->arKey == rhs.pos->arKey );
