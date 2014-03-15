@@ -19,7 +19,6 @@ namespace Php {
 HashItemIterator::HashItemIterator(zend_class_entry *ce, zval *pval)
 {
     funcs = ce->iterator_funcs.funcs;
-    //getIterator(ce, pval);
     iter = ce->get_iterator(ce, pval, 0);
 }
 
@@ -89,10 +88,6 @@ bool HashItemIterator::isEmpty() const
 {
     // check for end of iteration (FAILURE or SUCCESS if data is valid)
     return ( FAILURE == funcs->valid(iter) );
-
-    /* invalidate current value/key (optional, may be NULL) */
-    //void (*invalidate_current)(zend_object_iterator *iter TSRMLS_DC);
-
 }
 
 /**
@@ -130,13 +125,6 @@ bool HashItemIterator::compare(const HashItem *rhs) const
            );
     return true;
 }
-
-/*
-void HashItemIterator::getIterator(zend_class_entry *ce, zval *pval)
-{
-    iter = ce->get_iterator(ce, pval, 0);
-}
-*/
 
 HashItemIterator::~HashItemIterator()
 {
