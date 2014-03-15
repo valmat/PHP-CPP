@@ -31,7 +31,8 @@ Value HashItemIterator::value() const
     // fetch the item data for the current element
     zval **pval;
     funcs->get_current_data(iter, &pval);
-    return Value(*pval);
+    //return Value(*pval);
+    return *pval;
 }
 
 /**

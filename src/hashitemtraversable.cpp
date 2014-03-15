@@ -30,7 +30,8 @@ Value HashItemTraversable::value() const
     zval **pval;
     zend_user_it_get_current_data(iter, &pval);
 
-    return Value(*pval);
+    //return Value(*pval);
+    return *pval;
 }
 
 /**

@@ -21,10 +21,7 @@ struct _zend_object_iterator_funcs;
  */
 namespace Php {
 
-/**
- *  Class definition
- *  HashItemIterator
- */
+
 class HashItemIterator : public HashItem
 {
 public:
@@ -83,8 +80,6 @@ public:
     virtual ~HashItemIterator();
 
 private:
-
-	//virtual void getIterator(_zend_class_entry *ce, _zval_struct *pval);
 
 	// Internal iterator of iterable object
 	_zend_object_iterator *iter;

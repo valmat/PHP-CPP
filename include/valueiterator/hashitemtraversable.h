@@ -12,11 +12,8 @@
  *  Set up namespace
  */
 namespace Php {
+	
 
-/**
- *  Class definition
- *  HashItemTraversable
- */
 class HashItemTraversable : public HashItem
 {
 public:
@@ -78,7 +75,7 @@ public:
 private:
 	// Internal iterator of iterable object
 	_zend_object_iterator *iter;
-    
+
 };
 
 /**
