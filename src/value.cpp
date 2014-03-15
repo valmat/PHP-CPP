@@ -1582,9 +1582,7 @@ std::map<std::string,Php::Value> Value::mapValue() const
 Value::iterator Value::begin()
 {
     // if already exist
-    if(_hashitem) {
-       return _hashitem;
-    }
+    if(_hashitem) return _hashitem;
 
     // check type
     if (isArray())
@@ -1593,7 +1591,6 @@ Value::iterator Value::begin()
         HashTable *arr = Z_ARRVAL_P(_val);
         
         return (_hashitem = new HashItemArray(arr));
-        
     }
     else if (isObject())
     {
@@ -1620,7 +1617,6 @@ Value::iterator Value::begin()
             HashTable *arr = Z_OBJ_HT_P(_val)->get_properties(_val);
 
             return (_hashitem = new HashItemObject(arr));
-
         }
         
     }
@@ -1645,9 +1641,7 @@ Value::iterator Value::end() const
 Value::iterator Value::rbegin()
 {
     // if already exist
-    if(_hashitem) {
-       return _hashitem;
-    }
+    if(_hashitem) return _hashitem;
 
     // check type
     if (isArray())

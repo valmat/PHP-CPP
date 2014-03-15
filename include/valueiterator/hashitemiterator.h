@@ -1,7 +1,9 @@
 /**
  *  hashitemiterator.h
  *
- *  HashItemIterator
+ *
+ *  HashItemIterator - allows iterate objects of a class that implements the PHP Iterator interface
+ *
  *
  *  @copyright 2013 Copernica BV
  */
@@ -48,7 +50,7 @@ public:
     virtual unsigned long intKey() const override;
 
     /**
-     *  return integer key (index)
+     *  return string key
      */
     virtual std::string strKey() const override;
 

@@ -1,7 +1,9 @@
 /**
  *  hashitemtraversable.h
  *
- *  HashItemTraversable
+ *
+ *  HashItemTraversable - allows iterate objects of a class that implements the PHP Traversable interface
+ *
  *
  *  @copyright 2013 Copernica BV
  */
@@ -40,7 +42,7 @@ public:
     virtual unsigned long intKey() const override;
 
     /**
-     *  return integer key (index)
+     *  return string key
      */
     virtual std::string strKey() const override;
 
@@ -67,12 +69,12 @@ public:
     /**
      *  compare operator
      */
-    //virtual bool compare(const HashItem& rhs) const;
     virtual bool compare(const HashItem *rhs) const override;
 
     virtual ~HashItemTraversable() {}
 
 private:
+    
 	// Internal iterator of iterable object
 	_zend_object_iterator *iter;
 

@@ -1,7 +1,9 @@
 /**
  *  hashitemiterator.cpp
  *
- *  HashItemIterator
+ *
+ *  HashItemIterator - allows iterate objects of a class that implements the PHP Iterator interface
+ *
  *
  *  @copyright 2013 Copernica BV
  */
@@ -31,7 +33,6 @@ Value HashItemIterator::value() const
     // fetch the item data for the current element
     zval **pval;
     funcs->get_current_data(iter, &pval);
-    //return Value(*pval);
     return *pval;
 }
 
@@ -40,9 +41,9 @@ Value HashItemIterator::value() const
  */
 Value HashItemIterator::key() const
 {
-    // fetch the key for the current element (optional, may be NULL). The key
-    // should be written into the provided zval* using the ZVAL_* macros. If
-    // this handler is not provided auto-incrementing integer keys will be used.
+    // fetch the key for the current element. 
+    // The key should be written into the provided zval* using the ZVAL_* macros.
+    // If this handler is not provided auto-incrementing integer keys will be used.
     zval zv;
     funcs->get_current_key(iter, &zv);
     Value retv(&zv);
@@ -62,7 +63,7 @@ unsigned long HashItemIterator::intKey() const
 }
 
 /**
- *  return integer key (index)
+ *  return string key
  */
 std::string HashItemIterator::strKey() const
 {
@@ -105,7 +106,7 @@ void HashItemIterator::next()
  */
 void HashItemIterator::reset()
 {
-    // rewind to start of data (optional, may be NULL)
+    // rewind to start of data
     funcs->rewind(iter);
 }
 

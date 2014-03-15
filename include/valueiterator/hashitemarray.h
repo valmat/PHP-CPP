@@ -1,7 +1,9 @@
 /**
  *  hashitemarray.h
  *
- *  HashItemArray
+ *  
+ *  HashItemArray - Allows iteration of regular PHP-array
+ *
  *
  *  @copyright 2013 Copernica BV
  */
@@ -13,10 +15,7 @@
  */
 namespace Php {
 
-/**
- *  Class definition
- *  HashItemArray
- */
+
 class HashItemArray : public HashItem
 {
 public:
@@ -52,7 +51,7 @@ public:
     }
 
     /**
-     *  return integer key (index)
+     *  return string key
      */
     virtual std::string strKey() const override
     {
@@ -68,7 +67,7 @@ public:
     }
 
     /**
-     *  is hashtable item is empty?
+     *  current item of hashtable  is empty?
      */
     virtual bool isEmpty() const override
     {

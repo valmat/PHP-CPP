@@ -1,7 +1,9 @@
 /**
  *  hashitemarrayreverse.h
  *
- *  HashItemArrayReverse
+ *  
+ *  HashItemArrayReverse - Allows reverse iteration of regular PHP-array
+ *
  *
  *  @copyright 2013 Copernica BV
  */
@@ -13,10 +15,7 @@
  */
 namespace Php {
 
-/**
- *  Class definition
- *  HashItemArrayReverse
- */
+
 class HashItemArrayReverse : public HashItemArray
 {
 public:
