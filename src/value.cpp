@@ -1597,14 +1597,15 @@ Value::iterator Value::begin()
         zend_class_entry *ce = zend_get_class_entry(_val);
 
         // If the object class implements iterator or traversable
-        if(ce->get_iterator) {
+        if(ce->get_iterator)
+        {
             
-            // if this object is an instance of a class that implements the iterator
+            // if this object is an instance of a class that implements the Iterator (PHP-interface)
             if(ce->iterator_funcs.funcs)
             {
                 return (_hashitem = new HashItemIterator(ce, _val));
             }
-            //if this object is an instance of a class that implements the traversable
+            //if this object is an instance of a class that implements the Traversable (PHP-interface)
             else 
             {
                 return (_hashitem = new HashItemTraversable(ce, _val));
