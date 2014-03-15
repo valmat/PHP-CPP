@@ -83,7 +83,6 @@ bool HashPositionWrapper::keyAccessible() const
     // This hack and it might break in future versions of PHP.
     // @todo It would be good to redo it using regular Zend functions.
     
-    //return ( pos && pos->arKey &&'\0' != *(pos->arKey) );
     return ( pos && 
                     ( 
                         !pos->nKeyLength || 

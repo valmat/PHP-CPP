@@ -1604,22 +1604,106 @@ Value::iterator Value::begin()
         //auto ce = Z_OBJCE(_val);
         //zend_class_entry *pce = zend_get_class_entry(const zval *zobject TSRMLS_DC);
         zend_class_entry *ce = zend_get_class_entry(_val);
-        std::cout << "\x1b[0;31m\n zend_get_class_entry="<< ce <<" \n\x1b[0m";
 
         
 
-        std::cout << "\x1b[0;31m\n ce->iterator_funcs="<< ce->iterator_funcs.funcs <<" \n\x1b[0m";
+        //std::cout << "\x1b[0;31m\n ce->iterator_funcs="<< ce->iterator_funcs.funcs <<" \n\x1b[0m";
+
+
+
 
         // Объект реализует итератор
         if(ce->get_iterator) {
-            std::cout << "\x1b[0;31m\n Объект реализует итератор:"<< ce->get_iterator <<" \n\x1b[0m";
+            std::cout << "\x1b[0;32m\n Объект реализует итератор \n\x1b[0m";
             //iterator
+
+
+            std::cout << "\x1b[0;31m\n ce->num_interfaces="<< ce->num_interfaces <<" \n\x1b[0m";
+            std::cout << "\x1b[0;31m\n ce->interfaces="<< ce->interfaces <<" \n\x1b[0m";
+            //std::cout << "\x1b[0;31m\n ce->get_iterator="<< ce->get_iterator <<" \n\x1b[0m";
+            std::cout << "\x1b[0;31m\n ce->iterator_funcs.funcs="<< ce->iterator_funcs.funcs <<" \n\x1b[0m";
+
+
+
+            
+            if (ce->num_interfaces) {
+                for (unsigned int i = 0; i < ce->num_interfaces; i++) {
+                    if (ce->interfaces[i] == zend_ce_iterator) {
+                        std::cout << "\x1b[0;33m\n Found: zend_ce_iterator \n\x1b[0m";
+                    }
+                    if (ce->interfaces[i] == zend_ce_traversable) {
+                        std::cout << "\x1b[0;33m\n Found: zend_ce_traversable \n\x1b[0m";
+                    }
+/*
+
+                        zend_error(E_ERROR, "Class %s cannot implement both %s and %s at the same time",
+                                    ce->name,
+                                    interface->name,
+                                    zend_ce_iterator->name);
+                        return nullptr;
+*/
+
+                }
+            }
+
+            // if this object is an instance of a class that implements the iterator
+            if(ce->iterator_funcs.funcs) {
+                zval zv;
+                std::cout << "\x1b[0;34m\n ce->iterator_funcs.funcs="<< ce->iterator_funcs.funcs->get_current_key <<" \n\x1b[0m";
+
+                
+                // zend_object_iterator *(*get_iterator)(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
+                zend_object_iterator *iter = ce->get_iterator(ce, _val, 0);
+
+                //void (*rewind)(zend_object_iterator *iter TSRMLS_DC);
+                ce->iterator_funcs.funcs->rewind(iter);
+
+                ce->iterator_funcs.funcs->get_current_key(iter, &zv);
+
+                std::cout << "\x1b[1;36m\n Value(&zv)=="<< Value(&zv) <<" \n\x1b[0;0m";
+
+/*
+src/value.cpp:1654:136: error: cannot convert ‘zend_object_iterator* (*)(zend_class_entry*, zval*, int) {aka _zend_object_iterator* (*)(_zend_class_entry*, _zval_struct*, int)}’ to ‘zend_object_iterator* {aka _zend_object_iterator*}’ in argument passing
+                 std::cout << "\x1b[1;35m\n ce->iterator_funcs.funcs="<< ce->iterator_funcs.funcs->get_current_key(ce->get_iterator, &zv) <<" \n\x1b[0;0m";
+*/
+
+                //key(struct _zend_object_iterator *iter, struct _zval_struct *data);
+                    
+                
+
+            }
+
+
+
+
+
+
+
+
+
         } else {
             // get access to the hast table
             HashTable *arr = Z_OBJ_HT_P(_val)->get_properties(_val);
 
             return (_hashitem = new HashItemObject(arr));
         }
+
+
+
+
+
+
+
+
+        /*
+        ce->num_interfaces
+        ce->interfaces
+        ce->get_iterator
+        ce->iterator_funcs.funcs
+
+        */
+
+
         
     }
 
