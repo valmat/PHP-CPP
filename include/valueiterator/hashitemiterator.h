@@ -33,7 +33,6 @@ public:
      *  Constructor HashItemIterator
      *  @param  arr HashTable
      */
-    //explicit HashItemIterator(_zend_object_iterator *it) :  {}
     HashItemIterator(_zend_class_entry* ce, _zval_struct* val);
 
     /**
@@ -79,12 +78,8 @@ public:
     /**
      *  compare operator
      */
-    //virtual bool compare(const HashItem& rhs) const;
     virtual bool compare(const HashItem *rhs) const override;
 
-
-
-    //virtual ~HashItemIterator() {};
     virtual ~HashItemIterator();
 
 private:
@@ -94,7 +89,6 @@ private:
 	// Internal iterator of iterable object
 	_zend_object_iterator *iter;
 	
-	//_zend_class_entry *ce;
 	_zend_object_iterator_funcs *funcs;
 
 };
