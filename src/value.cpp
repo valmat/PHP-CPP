@@ -1593,6 +1593,7 @@ Value::iterator Value::begin()
         HashTable *arr = Z_ARRVAL_P(_val);
         
         return (_hashitem = new HashItemArray(arr));
+        
     }
     else if (isObject())
     {
@@ -1600,57 +1601,15 @@ Value::iterator Value::begin()
 
         // If the object class implements iterator or traversable
         if(ce->get_iterator) {
-            std::cout << "\x1b[0;32m\n Объект реализует итератор \n\x1b[0m";
-            //iterator
-
-
-            std::cout << "\x1b[0;31m\n ce->num_interfaces="<< ce->num_interfaces <<" \n\x1b[0m";
-            std::cout << "\x1b[0;31m\n ce->interfaces="<< ce->interfaces <<" \n\x1b[0m";
-            //std::cout << "\x1b[0;31m\n ce->get_iterator="<< ce->get_iterator <<" \n\x1b[0m";
-            std::cout << "\x1b[0;31m\n ce->iterator_funcs.funcs="<< ce->iterator_funcs.funcs <<" \n\x1b[0m";
-
             
-            if (ce->num_interfaces) {
-                for (unsigned int i = 0; i < ce->num_interfaces; i++) {
-                    if (ce->interfaces[i] == zend_ce_iterator) {
-                        std::cout << "\x1b[0;33m\n Found: zend_ce_iterator \n\x1b[0m";
-                    }
-                    if (ce->interfaces[i] == zend_ce_traversable) {
-                        std::cout << "\x1b[0;33m\n Found: zend_ce_traversable \n\x1b[0m";
-                    }
-                }
-            }
-
-
-
             // if this object is an instance of a class that implements the iterator
             if(ce->iterator_funcs.funcs)
             {
-                
-
-                zval zv;
-                std::cout << "\x1b[0;34m\n ce->iterator_funcs.funcs="<< ce->iterator_funcs.funcs->get_current_key <<" \n\x1b[0m";
-
-                
-                // zend_object_iterator *(*get_iterator)(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
-                zend_object_iterator *iter = ce->get_iterator(ce, _val, 0);
-
-                //void (*rewind)(zend_object_iterator *iter TSRMLS_DC);
-                ce->iterator_funcs.funcs->rewind(iter);
-
-                ce->iterator_funcs.funcs->get_current_key(iter, &zv);
-
-                std::cout << "\x1b[1;36m\n Value(&zv)=="<< Value(&zv) <<" \n\x1b[0;0m";
-                
-
-
-                std::cout << "\x1b[0;31m\n new HashItemIterator \n\x1b[0m";
                 return (_hashitem = new HashItemIterator(ce, _val));
             }
             //if this object is an instance of a class that implements the traversable
             else 
             {
-                std::cout << "\x1b[0;31m\n new HashItemTraversable \n\x1b[0m";
                 return (_hashitem = new HashItemTraversable(ce, _val));
             }
 
@@ -1661,6 +1620,7 @@ Value::iterator Value::begin()
             HashTable *arr = Z_OBJ_HT_P(_val)->get_properties(_val);
 
             return (_hashitem = new HashItemObject(arr));
+
         }
         
     }
