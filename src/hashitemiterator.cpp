@@ -40,10 +40,9 @@ Value HashItemIterator::value() const
  */
 Value HashItemIterator::key() const
 {
-    /* fetch the key for the current element (optional, may be NULL). The key
-     * should be written into the provided zval* using the ZVAL_* macros. If
-     * this handler is not provided auto-incrementing integer keys will be
-     * used. */
+    // fetch the key for the current element (optional, may be NULL). The key
+    // should be written into the provided zval* using the ZVAL_* macros. If
+    // this handler is not provided auto-incrementing integer keys will be used.
     zval zv;
     funcs->get_current_key(iter, &zv);
     Value retv(&zv);

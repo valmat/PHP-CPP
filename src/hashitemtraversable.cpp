@@ -21,36 +21,16 @@ HashItemTraversable::HashItemTraversable(zend_class_entry *ce, zval *pval)
 	iter = zend_user_it_get_new_iterator(ce, pval,0);
 }
 
-
 /**
  *  retrieve data value
  */
 Value HashItemTraversable::value() const 
 {
-
-    //zval **value;
-    //zend_hash_get_current_data_ex(ht, (void **) &value, &pos);
-    //return Value(*value);
-
-    //zval_add_ref((zval **)pos->pData);
-    //return Value(*((zval **)pos->pData));
-
-
-
     // fetch the item data for the current element
-    //zval **value;
     zval **pval;
-    //funcs->get_current_data(iter, (zval ***)&value);
-    //funcs->get_current_data(iter, &pval);
-    // ZEND_API void zend_user_it_get_current_data(zend_object_iterator *_iter, zval ***data TSRMLS_DC);
     zend_user_it_get_current_data(iter, &pval);
 
-    //void (*)(zend_object_iterator *iter, zval ***data TSRMLS_DC);
-    //return Value(**ppretv);
-    //return Value(*((zval **)value));
     return Value(*pval);
-    
-
 }
 
 /**
@@ -58,17 +38,11 @@ Value HashItemTraversable::value() const
  */
 Value HashItemTraversable::key() const
 {
-    /* fetch the key for the current element (optional, may be NULL). The key
-     * should be written into the provided zval* using the ZVAL_* macros. If
-     * this handler is not provided auto-incrementing integer keys will be
-     * used. */
-    //void (*get_current_key)(zend_object_iterator *iter, zval *key TSRMLS_DC);
-
+    // fetch the key for the current element (optional, may be NULL). The key
+    // should be written into the provided zval* using the ZVAL_* macros. If
+    // this handler is not provided auto-incrementing integer keys will be used.
     zval zv;
-    //funcs->get_current_key(iter, &zv);
-    // ZEND_API void zend_user_it_get_current_key(zend_object_iterator *_iter, zval *key TSRMLS_DC);
     zend_user_it_get_current_key(iter, &zv);
-
     Value retv(&zv);
 
     // @todo May be the following line can be done better?
@@ -81,7 +55,6 @@ Value HashItemTraversable::key() const
 unsigned long HashItemTraversable::intKey() const
 {
     zval zv;
-    //funcs->get_current_key(iter, &zv);
     zend_user_it_get_current_key(iter, &zv);
     return zv.value.lval;
 }
@@ -92,7 +65,6 @@ unsigned long HashItemTraversable::intKey() const
 std::string HashItemTraversable::strKey() const
 {
     zval zv;
-    //funcs->get_current_key(iter, &zv);
     zend_user_it_get_current_key(iter, &zv);
     return  std::string(zv.value.str.val, zv.value.str.len);
 }
@@ -103,7 +75,6 @@ std::string HashItemTraversable::strKey() const
 bool HashItemTraversable::isstr() const
 {
     zval zv;
-    //funcs->get_current_key(iter, &zv);
     zend_user_it_get_current_key(iter, &zv);
     return ( (Type)Z_TYPE(zv) == Type::String );   
 }
@@ -114,14 +85,7 @@ bool HashItemTraversable::isstr() const
 bool HashItemTraversable::isEmpty() const
 {
     // check for end of iteration (FAILURE or SUCCESS if data is valid)
-    // ZEND_API int zend_user_it_valid(zend_object_iterator *_iter TSRMLS_DC);
-    //return ( FAILURE == funcs->valid(iter) );
     return ( FAILURE == zend_user_it_valid(iter) );
-    
-    /* invalidate current value/key (optional, may be NULL) */
-    //void (*invalidate_current)(zend_object_iterator *iter TSRMLS_DC);
-	// ZEND_API void zend_user_it_invalidate_current(zend_object_iterator *_iter TSRMLS_DC);
-
 }
 
 /**
@@ -130,8 +94,6 @@ bool HashItemTraversable::isEmpty() const
 void HashItemTraversable::next()
 {
     // step forwards to next element
-    //funcs->move_forward(iter);
-    // ZEND_API void zend_user_it_move_forward(zend_object_iterator *_iter TSRMLS_DC);
     zend_user_it_move_forward(iter);
 }
 
@@ -141,8 +103,6 @@ void HashItemTraversable::next()
 void HashItemTraversable::reset()
 {
     // rewind to start of data (optional, may be NULL)
-    //funcs->rewind(iter);
-    // ZEND_API void zend_user_it_rewind(zend_object_iterator *_iter TSRMLS_DC);
     zend_user_it_rewind(iter);
 }
 
@@ -152,8 +112,6 @@ void HashItemTraversable::reset()
 bool HashItemTraversable::compare(const HashItem *rhs) const
 {
     zval thisKey, thatKey;
-    //funcs->get_current_key(iter, &thisKey);
-    //((HashItemTraversable *)rhs)->funcs->get_current_key( ((HashItemTraversable *)rhs)->iter, &thatKey);
     zend_user_it_get_current_key(iter, &thisKey);
     zend_user_it_get_current_key( ((HashItemTraversable *)rhs)->iter, &thatKey);
 
