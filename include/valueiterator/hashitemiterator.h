@@ -7,8 +7,6 @@
  *
  *  @copyright 2013 Copernica BV
  */
-#ifndef HASHITEMITERATOR_H
-#define HASHITEMITERATOR_H
 
 
 
@@ -94,4 +92,3 @@ private:
  *  End of namespace
  */
 }
-#endif /* HashItemIterator.h */

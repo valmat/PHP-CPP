@@ -7,8 +7,7 @@
  *
  *  @copyright 2013 Copernica BV
  */
-#ifndef HASHITEMTRAVERSABLE_H
-#define HASHITEMTRAVERSABLE_H
+
 
 /**
  *  Set up namespace
@@ -84,4 +83,3 @@ private:
  *  End of namespace
  */
 }
-#endif /* HashItemTraversable.h */

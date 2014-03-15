@@ -6,8 +6,7 @@
  *
  *  @copyright 2013 Copernica BV
  */
-#ifndef VALUEITERATOR_H
-#define VALUEITERATOR_H
+
 
 /**
  *  Set up namespace
@@ -96,4 +95,3 @@ private:
  *  End of namespace
  */
 }
-#endif /* valueiterator.h */

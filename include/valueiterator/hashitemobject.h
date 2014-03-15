@@ -7,8 +7,7 @@
  *
  *  @copyright 2013 Copernica BV
  */
-#ifndef HASHITEMOBJECT_H
-#define HASHITEMOBJECT_H
+
 
 /**
  *  Set up namespace
@@ -72,4 +71,3 @@ private:
  *  End of namespace
  */
 }
-#endif /* hashitemobject.h */

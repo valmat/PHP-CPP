@@ -6,8 +6,6 @@
  *  @copyright 2013 Copernica BV
  */
 
-#ifndef HTPWRAPPER_H
-#define HTPWRAPPER_H
 
 /**
  *  Forward declaration
@@ -111,4 +109,4 @@ private:
  *  End of namespace
  */
 }
-#endif /* hashpositionwrapper.h */
+

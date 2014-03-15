@@ -7,8 +7,8 @@
  *
  *  @copyright 2013 Copernica BV
  */
-#ifndef HASHITEMARRAY_H
-#define HASHITEMARRAY_H
+
+
 
 /**
  *  Set up namespace
@@ -110,4 +110,4 @@ protected:
  *  End of namespace
  */
 }
-#endif /* hashitemarray.h */
+

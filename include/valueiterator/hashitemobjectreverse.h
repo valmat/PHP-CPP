@@ -7,8 +7,7 @@
  *
  *  @copyright 2013 Copernica BV
  */
-#ifndef HASHITEMOBJECTREVERSE_H
-#define HASHITEMOBJECTREVERSE_H
+
 
 /**
  *  Set up namespace
@@ -72,4 +71,3 @@ private:
  *  End of namespace
  */
 }
-#endif /* HashItemObjectReverse.h */
