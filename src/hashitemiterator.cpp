@@ -76,16 +76,12 @@ Value HashItemIterator::key() const
     funcs->get_current_key(iter, &zv);
 
     Type tp = (Type)Z_TYPE(zv);
-
-
     //std::cout << "\x1b[1;32m\n zv.type "<< ((Type)Z_TYPE(zv) == Type::Numeric) ? "n" : "s" <<" \n\x1b[0;0m";
     std::cout << "\x1b[1;32m\n zv.type "<< ( (tp == Type::Numeric) ? "n" : "s" ) <<" \n\x1b[0;0m";
     std::cout << "\x1b[1;32m\n zv.value.lval "<< zv.value.lval <<" \n\x1b[0;0m";
     std::cout << "\x1b[1;32m\n zv.value.str.val "<< zv.value.str.val <<" \n\x1b[0;0m";
     std::cout << "\x1b[1;32m\n zv.value.str.len "<< zv.value.str.len <<" \n\x1b[0;0m";
-    
-    
-    
+
     
 
     /*
@@ -109,8 +105,10 @@ Value HashItemIterator::key() const
 unsigned long HashItemIterator::intKey() const
 {
     std::cout << "\x1b[0;36m\n HashItemIterator::intKey \n\x1b[0m";
-    // #####TODO
-    return 1;
+
+    zval zv;
+    funcs->get_current_key(iter, &zv);
+    return zv.value.lval;
 }
 
 /**
@@ -119,8 +117,10 @@ unsigned long HashItemIterator::intKey() const
 std::string HashItemIterator::strKey() const
 {
     std::cout << "\x1b[0;36m\n HashItemIterator::strKey \n\x1b[0m";
-    // #####TODO
-    return "qwe";
+
+    zval zv;
+    funcs->get_current_key(iter, &zv);
+    return  std::string(zv.value.str.val, zv.value.str.len);
 }
 
 /**
@@ -130,7 +130,25 @@ bool HashItemIterator::isstr() const
 {
     std::cout << "\x1b[0;36m\n HashItemIterator::isstr \n\x1b[0m";
     // #####TODO
-    return true;   
+
+    zval zv;
+    funcs->get_current_key(iter, &zv);
+
+    /*
+    Type tp = (Type)Z_TYPE(zv);
+    Type keyType = Type::Null;
+    long lval;                  
+    double dval;                
+    struct {
+        char *val;
+        int len;
+    zv.type
+    zv.value.lval
+    zv.value.str.val
+    zv.value.str.len
+    */
+
+    return ( (Type)Z_TYPE(zv) == Type::String );   
 }
 
 /**
@@ -173,7 +191,17 @@ void HashItemIterator::reset()
 bool HashItemIterator::compare(const HashItem *rhs) const
 {
     std::cout << "\x1b[0;36m\n HashItemIterator::compare \n\x1b[0m";
-    // #####TODO
+
+    zval thisKey, thatKey;
+    funcs->get_current_key(iter, &thisKey);
+    ((HashItemIterator *)rhs)->funcs->get_current_key( ((HashItemIterator *)rhs)->iter, &thatKey);
+
+    return (
+                thisKey.type          == thatKey.type          && 
+                thisKey.value.lval    == thatKey.value.lval    && 
+                thisKey.value.str.len == thatKey.value.str.len &&
+                thisKey.value.str.val == thatKey.value.str.val
+           );
     return true;
 }
 
