@@ -36,7 +36,7 @@
 #include <phpcpp/valueiterator/hashitemarrayreverse.h>
 #include <phpcpp/valueiterator/hashitemobjectreverse.h>
 
-//#include <phpcpp/valueiterator/hashitemiterator.h>
+#include <phpcpp/valueiterator/hashitemiterator.h>
 
 #include <phpcpp/valueiterator/valueiterator.h>
 

@@ -19,9 +19,10 @@
  */
 
 /**
- *  Forward definitions
+ *  Forward declarations
  */
 struct _zval_struct;
+struct _zend_class_entry;
 
 /**
  *  Set up namespace

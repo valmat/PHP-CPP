@@ -54,7 +54,7 @@
 #include "../include/valueiterator/hashitemarrayreverse.h"
 #include "../include/valueiterator/hashitemobjectreverse.h"
 
-//#include "../include/valueiterator/hashitemiterator.h"
+#include "../include/valueiterator/hashitemiterator.h"
 
 #include "../include/valueiterator/valueiterator.h"
 

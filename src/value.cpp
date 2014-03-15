@@ -278,6 +278,7 @@ Value::~Value()
 {
     // ignore if moved
     if (!_val) return;
+    std::cout << "\x1b[1;35m\n Value::~Value() \n\x1b[0;0m";
     
     // if there were two references or less, we're going to remove a reference
     // and only one reference will remain, the object will then impossible be
@@ -1612,7 +1613,7 @@ Value::iterator Value::begin()
 
 
 
-        // Объект реализует итератор
+        // If the object class implements iterator or traversable
         if(ce->get_iterator) {
             std::cout << "\x1b[0;32m\n Объект реализует итератор \n\x1b[0m";
             //iterator
@@ -1648,6 +1649,7 @@ Value::iterator Value::begin()
 
             // if this object is an instance of a class that implements the iterator
             if(ce->iterator_funcs.funcs) {
+                /*
                 zval zv;
                 std::cout << "\x1b[0;34m\n ce->iterator_funcs.funcs="<< ce->iterator_funcs.funcs->get_current_key <<" \n\x1b[0m";
 
@@ -1661,6 +1663,7 @@ Value::iterator Value::begin()
                 ce->iterator_funcs.funcs->get_current_key(iter, &zv);
 
                 std::cout << "\x1b[1;36m\n Value(&zv)=="<< Value(&zv) <<" \n\x1b[0;0m";
+                */
 
 /*
 src/value.cpp:1654:136: error: cannot convert ‘zend_object_iterator* (*)(zend_class_entry*, zval*, int) {aka _zend_object_iterator* (*)(_zend_class_entry*, _zval_struct*, int)}’ to ‘zend_object_iterator* {aka _zend_object_iterator*}’ in argument passing
@@ -1668,6 +1671,10 @@ src/value.cpp:1654:136: error: cannot convert ‘zend_object_iterator* (*)(zend_
 */
 
                 //key(struct _zend_object_iterator *iter, struct _zval_struct *data);
+
+
+                std::cout << "\x1b[0;31m\n new HashItemIterator \n\x1b[0m";
+                return (_hashitem = new HashItemIterator(ce, _val));
                     
                 
 

@@ -8,6 +8,14 @@
 #ifndef HASHITEMITERATOR_H
 #define HASHITEMITERATOR_H
 
+
+
+/**
+ *  Forward declaration
+ */
+struct _zend_object_iterator;
+struct _zend_object_iterator_funcs;
+
 /**
  *  Set up namespace
  */
@@ -25,61 +33,68 @@ public:
      *  Constructor HashItemIterator
      *  @param  arr HashTable
      */
-    //explicit HashItemIterator(_hashtable *arr) : HashPos(arr) {}
-
-
+    //explicit HashItemIterator(_zend_object_iterator *it) :  {}
+    HashItemIterator(_zend_class_entry* ce, _zval_struct* val);
 
     /**
      *  retrieve data value
      */
-    virtual Value value() const = 0;
+    virtual Value value() const override;
 
     /**
      *  return key
      */
-    virtual Value key() const = 0;
+    virtual Value key() const override;
 
     /**
      *  return integer key (index)
      */
-    virtual unsigned long intKey() const = 0;
+    virtual unsigned long intKey() const override;
 
     /**
      *  return integer key (index)
      */
-    virtual std::string strKey() const = 0;
+    virtual std::string strKey() const override;
 
     /**
      *  key type is string?
      */
-    virtual bool isstr() const = 0;
+    virtual bool isstr() const override;
 
     /**
      *  is hashtable item is empty?
      */
-    virtual bool isEmpty() const = 0;
+    virtual bool isEmpty() const override;
 
     /**
      *  next iteration
      */
-    virtual void next() = 0;
+    virtual void next() override;
 
     /**
      *  reset iterator to beginning of the hash table
      */
-    virtual void reset() = 0;
+    virtual void reset() override;
 
     /**
      *  compare operator
      */
     //virtual bool compare(const HashItem& rhs) const;
-    virtual bool compare(const HashItem *rhs) const = 0;
+    virtual bool compare(const HashItem *rhs) const override;
 
 
 
-    virtual ~HashItemIterator() {};
+    //virtual ~HashItemIterator() {};
+    virtual ~HashItemIterator();
 
 private:
+
+	virtual void getIterator(_zend_class_entry *ce, _zval_struct *pval);
+
+	// Internal iterator of iterable object
+	_zend_object_iterator *iter;
+	//_zend_class_entry *ce;
+	_zend_object_iterator_funcs *funcs;
     
 };
 
