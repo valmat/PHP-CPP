@@ -1595,10 +1595,32 @@ Value::iterator Value::begin()
     }
     else if (isObject())
     {
-        // get access to the hast table
-        HashTable *arr = Z_OBJ_HT_P(_val)->get_properties(_val);
 
-        return (_hashitem = new HashItemObject(arr));
+
+
+
+        //zend_object_iterator obit = zend_user_it_get_iterator(zend_class_entry *ce, zval *object, 0);
+        //zend_object_iterator obit = zend_user_it_get_iterator(NULL, _val, 0);
+        //auto ce = Z_OBJCE(_val);
+        //zend_class_entry *pce = zend_get_class_entry(const zval *zobject TSRMLS_DC);
+        zend_class_entry *ce = zend_get_class_entry(_val);
+        std::cout << "\x1b[0;31m\n zend_get_class_entry="<< ce <<" \n\x1b[0m";
+
+        
+
+        std::cout << "\x1b[0;31m\n ce->iterator_funcs="<< ce->iterator_funcs.funcs <<" \n\x1b[0m";
+
+        // Объект реализует итератор
+        if(ce->get_iterator) {
+            std::cout << "\x1b[0;31m\n Объект реализует итератор:"<< ce->get_iterator <<" \n\x1b[0m";
+            //iterator
+        } else {
+            // get access to the hast table
+            HashTable *arr = Z_OBJ_HT_P(_val)->get_properties(_val);
+
+            return (_hashitem = new HashItemObject(arr));
+        }
+        
     }
 
     // for no-iterable types
