@@ -65,45 +65,42 @@ Value HashItemIterator::value() const
  */
 Value HashItemIterator::key() const
 {
-
     /* fetch the key for the current element (optional, may be NULL). The key
      * should be written into the provided zval* using the ZVAL_* macros. If
      * this handler is not provided auto-incrementing integer keys will be
      * used. */
     //void (*get_current_key)(zend_object_iterator *iter, zval *key TSRMLS_DC);
-
-    // #################
     std::cout << "\x1b[0;36m\n return key \n\x1b[0m";
 
-    
-
     zval zv;
-    
     funcs->get_current_key(iter, &zv);
 
-    Value rezv(&zv);
+    Type tp = (Type)Z_TYPE(zv);
 
-    return rezv.clone();
-    //return Value("constkey");
+
+    //std::cout << "\x1b[1;32m\n zv.type "<< ((Type)Z_TYPE(zv) == Type::Numeric) ? "n" : "s" <<" \n\x1b[0;0m";
+    std::cout << "\x1b[1;32m\n zv.type "<< ( (tp == Type::Numeric) ? "n" : "s" ) <<" \n\x1b[0;0m";
+    std::cout << "\x1b[1;32m\n zv.value.lval "<< zv.value.lval <<" \n\x1b[0;0m";
+    std::cout << "\x1b[1;32m\n zv.value.str.val "<< zv.value.str.val <<" \n\x1b[0;0m";
+    std::cout << "\x1b[1;32m\n zv.value.str.len "<< zv.value.str.len <<" \n\x1b[0;0m";
     
+    
+    
+    
+
     /*
-    zval retv;
-    funcs->get_current_key(iter, &retv);
-    Value rez = Value(&retv).clone();
-    detach()
-    return rez;
-    */
-    
-    /*
-    Value rez;
-    zval *pzv = rez.detach();
-    funcs->get_current_key(iter, pzv);
-    SEPARATE_ZVAL_IF_NOT_REF(&pzv);
-    // = Value(&retv).clone();
-    
-    return rez;
+    zv.type
+    zv.value.lval
+    zv.value.str.val
+    zv.value.str.len
     */
 
+
+
+    Value retv(&zv);
+
+    // @todo May be the following line can be done better?
+    return retv.clone();
 }
 
 /**

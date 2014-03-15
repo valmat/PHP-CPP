@@ -278,7 +278,7 @@ Value::~Value()
 {
     // ignore if moved
     if (!_val) return;
-    std::cout << "\x1b[1;35m\n Value::~Value() \n\x1b[0;0m";
+    //std::cout << "\x1b[1;35m\n Value::~Value() \n\x1b[0;0m";
     
     // if there were two references or less, we're going to remove a reference
     // and only one reference will remain, the object will then impossible be
