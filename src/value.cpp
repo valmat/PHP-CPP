@@ -1596,22 +1596,7 @@ Value::iterator Value::begin()
     }
     else if (isObject())
     {
-
-
-
-
-        //zend_object_iterator obit = zend_user_it_get_iterator(zend_class_entry *ce, zval *object, 0);
-        //zend_object_iterator obit = zend_user_it_get_iterator(NULL, _val, 0);
-        //auto ce = Z_OBJCE(_val);
-        //zend_class_entry *pce = zend_get_class_entry(const zval *zobject TSRMLS_DC);
         zend_class_entry *ce = zend_get_class_entry(_val);
-
-        
-
-        //std::cout << "\x1b[0;31m\n ce->iterator_funcs="<< ce->iterator_funcs.funcs <<" \n\x1b[0m";
-
-
-
 
         // If the object class implements iterator or traversable
         if(ce->get_iterator) {
@@ -1624,8 +1609,6 @@ Value::iterator Value::begin()
             //std::cout << "\x1b[0;31m\n ce->get_iterator="<< ce->get_iterator <<" \n\x1b[0m";
             std::cout << "\x1b[0;31m\n ce->iterator_funcs.funcs="<< ce->iterator_funcs.funcs <<" \n\x1b[0m";
 
-
-
             
             if (ce->num_interfaces) {
                 for (unsigned int i = 0; i < ce->num_interfaces; i++) {
@@ -1635,20 +1618,14 @@ Value::iterator Value::begin()
                     if (ce->interfaces[i] == zend_ce_traversable) {
                         std::cout << "\x1b[0;33m\n Found: zend_ce_traversable \n\x1b[0m";
                     }
-/*
-
-                        zend_error(E_ERROR, "Class %s cannot implement both %s and %s at the same time",
-                                    ce->name,
-                                    interface->name,
-                                    zend_ce_iterator->name);
-                        return nullptr;
-*/
-
                 }
             }
 
+
+
             // if this object is an instance of a class that implements the iterator
-            if(ce->iterator_funcs.funcs) {
+            if(ce->iterator_funcs.funcs)
+            {
                 
 
                 zval zv;
@@ -1666,159 +1643,25 @@ Value::iterator Value::begin()
                 std::cout << "\x1b[1;36m\n Value(&zv)=="<< Value(&zv) <<" \n\x1b[0;0m";
                 
 
-/*
-src/value.cpp:1654:136: error: cannot convert ‘zend_object_iterator* (*)(zend_class_entry*, zval*, int) {aka _zend_object_iterator* (*)(_zend_class_entry*, _zval_struct*, int)}’ to ‘zend_object_iterator* {aka _zend_object_iterator*}’ in argument passing
-                 std::cout << "\x1b[1;35m\n ce->iterator_funcs.funcs="<< ce->iterator_funcs.funcs->get_current_key(ce->get_iterator, &zv) <<" \n\x1b[0;0m";
-*/
-
-                //key(struct _zend_object_iterator *iter, struct _zval_struct *data);
-
 
                 std::cout << "\x1b[0;31m\n new HashItemIterator \n\x1b[0m";
                 return (_hashitem = new HashItemIterator(ce, _val));
-                    
-                
-
-            } else {
-
-/*
-class Traversable
-{
-public:
-    virtual Iterator *getIterator() = 0;
-};
-*/
-
-/*
-static Base *cpp_object(const zval *val)
-{
-    // retrieve the old object, which we are going to copy
-    MixedObject *object = (MixedObject *)zend_object_store_get_object(val);
-
-    // return the cpp object
-    return object->cpp;
-}
-*/
-                    std::cout << "\x1b[0;31m\n new HashItemTraversable \n\x1b[0m";
-
-                    // does it implement the countable interface?
-                    //Countable *countable = dynamic_cast<Countable*>(cpp_object(object));
-                    //Traversable *traversable = dynamic_cast<Traversable*>(cpp_object(_val));
-
-                    /*
-                    MixedObject *object = (MixedObject *)zend_object_store_get_object(_val);
-                    Base *object_cpp = object->cpp;
-                    Traversable *traversable = dynamic_cast<Traversable*>(object_cpp);
-
-
-                    if (traversable) 
-                    {
-                        // call the count function
-                        //iterator = traversable->getIterator();
-                        
-                        std::cout << "\x1b[1;31m\n SUCCESS \n\x1b[0;0m";
-                    } else {
-                        std::cout << "\x1b[1;31m\n NO SUCCESS \n\x1b[0;0m";
-                    }
-                    */
-
-                    /*
-                    zend_object_iterator* iterator = ClassBase::getIterator(ce, _val, 0);
-
-
-                    if (iterator) 
-                    {
-                        // call the count function
-                        //iterator = traversable->getIterator();
-                        
-                        std::cout << "\x1b[1;31m\n SUCCESS \n\x1b[0;0m";
-                    } else {
-                        std::cout << "\x1b[1;31m\n NO SUCCESS \n\x1b[0;0m";
-                    }
-                    */
-
-                    /*
-                    // create an iterator
-                    zend_object_iterator *iterator = (zend_object_iterator *)emalloc(sizeof(zend_object_iterator));
-                    
-                    // initialize all properties
-                    iterator->data = this;
-                    iterator->index = 0;
-
-                    
-                    //zend_object_iterator_funcs *Iterator::functions()
-                    //{
-                        // static variable with all functions
-                        static zend_object_iterator_funcs funcs;
-                        
-                        // static variable that knows if the funcs are already initialized
-                        static bool initialized = false;
-                        
-                        // no need to set anything if already initialized
-                        
-                        // set the members
-                        funcs.dtor = &Iterator::destructor;
-                        funcs.valid = &Iterator::valid;
-                        funcs.get_current_data = &Iterator::current;
-                        funcs.get_current_key = &Iterator::key;
-                        funcs.move_forward = &Iterator::next;
-                        funcs.rewind = &Iterator::rewind;
-                        
-                        // invalidate is not yet supported
-                        funcs.invalidate_current = nullptr;
-                        
-                        // done
-                    //}
-
-                    iterator->funcs = funcs;
-                    */
-
-                    //zend_object_iterator *iterator = zend_user_it_get_new_iterator(zend_class_entry *ce, zval *object, int by_ref);
-                    //zend_object_iterator *iterator = zend_user_it_get_new_iterator(ce, _val,0);
-                    //zval *iterator = zend_user_it_new_iterator(ce, object TSRMLS_CC);
-
-
-                    return (_hashitem = new HashItemTraversable(ce, _val));
-
-
-                    
-
-                    
-
-
+            }
+            //if this object is an instance of a class that implements the traversable
+            else 
+            {
+                std::cout << "\x1b[0;31m\n new HashItemTraversable \n\x1b[0m";
+                return (_hashitem = new HashItemTraversable(ce, _val));
             }
 
-
-
-
-
-
-
-
-
-        } else {
+        }
+        else 
+        {
             // get access to the hast table
             HashTable *arr = Z_OBJ_HT_P(_val)->get_properties(_val);
 
             return (_hashitem = new HashItemObject(arr));
         }
-
-
-
-
-
-
-
-
-        /*
-        ce->num_interfaces
-        ce->interfaces
-        ce->get_iterator
-        ce->iterator_funcs.funcs
-
-        */
-
-
         
     }
 
