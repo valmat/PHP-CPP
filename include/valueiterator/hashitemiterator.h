@@ -84,11 +84,11 @@ public:
 
 private:
 
-	virtual void getIterator(_zend_class_entry *ce, _zval_struct *pval);
+	//virtual void getIterator(_zend_class_entry *ce, _zval_struct *pval);
 
 	// Internal iterator of iterable object
 	_zend_object_iterator *iter;
-	
+
 	_zend_object_iterator_funcs *funcs;
 
 };

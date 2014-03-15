@@ -19,7 +19,8 @@ namespace Php {
 HashItemIterator::HashItemIterator(zend_class_entry *ce, zval *pval)
 {
     funcs = ce->iterator_funcs.funcs;
-    getIterator(ce, pval);
+    //getIterator(ce, pval);
+    iter = ce->get_iterator(ce, pval, 0);
 }
 
 
@@ -131,10 +132,12 @@ bool HashItemIterator::compare(const HashItem *rhs) const
     return true;
 }
 
+/*
 void HashItemIterator::getIterator(zend_class_entry *ce, zval *pval)
 {
     iter = ce->get_iterator(ce, pval, 0);
 }
+*/
 
 HashItemIterator::~HashItemIterator()
 {

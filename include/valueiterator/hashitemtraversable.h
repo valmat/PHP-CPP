@@ -73,17 +73,11 @@ public:
     //virtual bool compare(const HashItem& rhs) const;
     virtual bool compare(const HashItem *rhs) const override;
 
-    virtual ~HashItemTraversable();
+    virtual ~HashItemTraversable() {}
 
 private:
-
-	virtual void getIterator(_zend_class_entry *ce, _zval_struct *pval);
-
 	// Internal iterator of iterable object
 	_zend_object_iterator *iter;
-	
-	//_zend_class_entry *ce;
-	//_zend_object_iterator_funcs *funcs;
     
 };
 

@@ -18,10 +18,7 @@ namespace Php {
  */
 HashItemTraversable::HashItemTraversable(zend_class_entry *ce, zval *pval)
 {
-    std::cout << "\x1b[0;36m\n HashItemTraversable::HashItemTraversable \n\x1b[0m";
-    //ce = _ce;
-    //funcs = ce->iterator_funcs.funcs;
-    getIterator(ce, pval);
+	iter = zend_user_it_get_new_iterator(ce, pval,0);
 }
 
 
@@ -30,11 +27,6 @@ HashItemTraversable::HashItemTraversable(zend_class_entry *ce, zval *pval)
  */
 Value HashItemTraversable::value() const 
 {
-
-    std::cout << "\x1b[0;36m\n return value \n\x1b[0m";
-
-    //return Value("constVal");
-
 
     //zval **value;
     //zend_hash_get_current_data_ex(ht, (void **) &value, &pos);
@@ -71,30 +63,11 @@ Value HashItemTraversable::key() const
      * this handler is not provided auto-incrementing integer keys will be
      * used. */
     //void (*get_current_key)(zend_object_iterator *iter, zval *key TSRMLS_DC);
-    std::cout << "\x1b[0;36m\n return key \n\x1b[0m";
 
     zval zv;
     //funcs->get_current_key(iter, &zv);
     // ZEND_API void zend_user_it_get_current_key(zend_object_iterator *_iter, zval *key TSRMLS_DC);
     zend_user_it_get_current_key(iter, &zv);
-
-    Type tp = (Type)Z_TYPE(zv);
-    //std::cout << "\x1b[1;32m\n zv.type "<< ((Type)Z_TYPE(zv) == Type::Numeric) ? "n" : "s" <<" \n\x1b[0;0m";
-    std::cout << "\x1b[1;32m\n zv.type "<< ( (tp == Type::Numeric) ? "n" : "s" ) <<" \n\x1b[0;0m";
-    std::cout << "\x1b[1;32m\n zv.value.lval "<< zv.value.lval <<" \n\x1b[0;0m";
-    std::cout << "\x1b[1;32m\n zv.value.str.val "<< zv.value.str.val <<" \n\x1b[0;0m";
-    std::cout << "\x1b[1;32m\n zv.value.str.len "<< zv.value.str.len <<" \n\x1b[0;0m";
-
-    
-
-    /*
-    zv.type
-    zv.value.lval
-    zv.value.str.val
-    zv.value.str.len
-    */
-
-
 
     Value retv(&zv);
 
@@ -107,8 +80,6 @@ Value HashItemTraversable::key() const
  */
 unsigned long HashItemTraversable::intKey() const
 {
-    std::cout << "\x1b[0;36m\n HashItemTraversable::intKey \n\x1b[0m";
-
     zval zv;
     //funcs->get_current_key(iter, &zv);
     zend_user_it_get_current_key(iter, &zv);
@@ -120,8 +91,6 @@ unsigned long HashItemTraversable::intKey() const
  */
 std::string HashItemTraversable::strKey() const
 {
-    std::cout << "\x1b[0;36m\n HashItemTraversable::strKey \n\x1b[0m";
-
     zval zv;
     //funcs->get_current_key(iter, &zv);
     zend_user_it_get_current_key(iter, &zv);
@@ -133,8 +102,6 @@ std::string HashItemTraversable::strKey() const
  */
 bool HashItemTraversable::isstr() const
 {
-    std::cout << "\x1b[0;36m\n HashItemTraversable::isstr \n\x1b[0m";
-
     zval zv;
     //funcs->get_current_key(iter, &zv);
     zend_user_it_get_current_key(iter, &zv);
@@ -146,7 +113,6 @@ bool HashItemTraversable::isstr() const
  */
 bool HashItemTraversable::isEmpty() const
 {
-    std::cout << "\x1b[0;36m\n HashItemTraversable::isEmpty \n\x1b[0m";
     // check for end of iteration (FAILURE or SUCCESS if data is valid)
     // ZEND_API int zend_user_it_valid(zend_object_iterator *_iter TSRMLS_DC);
     //return ( FAILURE == funcs->valid(iter) );
@@ -163,7 +129,6 @@ bool HashItemTraversable::isEmpty() const
  */
 void HashItemTraversable::next()
 {
-    std::cout << "\x1b[0;36m\n HashItemTraversable::next \n\x1b[0m";
     // step forwards to next element
     //funcs->move_forward(iter);
     // ZEND_API void zend_user_it_move_forward(zend_object_iterator *_iter TSRMLS_DC);
@@ -175,7 +140,6 @@ void HashItemTraversable::next()
  */
 void HashItemTraversable::reset()
 {
-    std::cout << "\x1b[0;36m\n HashItemTraversable::reset \n\x1b[0m";
     // rewind to start of data (optional, may be NULL)
     //funcs->rewind(iter);
     // ZEND_API void zend_user_it_rewind(zend_object_iterator *_iter TSRMLS_DC);
@@ -187,8 +151,6 @@ void HashItemTraversable::reset()
  */
 bool HashItemTraversable::compare(const HashItem *rhs) const
 {
-    std::cout << "\x1b[0;36m\n HashItemTraversable::compare \n\x1b[0m";
-
     zval thisKey, thatKey;
     //funcs->get_current_key(iter, &thisKey);
     //((HashItemTraversable *)rhs)->funcs->get_current_key( ((HashItemTraversable *)rhs)->iter, &thatKey);
@@ -202,37 +164,6 @@ bool HashItemTraversable::compare(const HashItem *rhs) const
                 thisKey.value.str.val == thatKey.value.str.val
            );
     return true;
-}
-
-void HashItemTraversable::getIterator(zend_class_entry *ce, zval *pval)
-{
-    std::cout << "\x1b[0;36m\n HashItemTraversable::getIterator \n\x1b[0m";
-    //iter = ce->get_iterator(ce, pval, 0);
-
-    //zend_object_iterator *iterator = zend_user_it_get_new_iterator(zend_class_entry *ce, zval *object, int by_ref);
-    //zend_object_iterator *iterator = zend_user_it_get_new_iterator(ce, _val,0);
-    //zval *iterator = zend_user_it_new_iterator(ce, object TSRMLS_CC);
-    iter = zend_user_it_get_new_iterator(ce, pval,0);
-
-    //iter->ce->iterator_funcs
-    
-    //std::cout << "\x1b[0;36m\n @@@ "<<  <<" \n\x1b[0m";
-    std::cout << "\x1b[0;36m\n ce->iterator_funcs.funcs "<< ce->iterator_funcs.funcs <<" \n\x1b[0m";
-    //std::cout << "\x1b[0;36m\n ce->iterator_funcs.funcs->rewind "<< ce->iterator_funcs.funcs->rewind <<" \n\x1b[0m";
-    //std::cout << "\x1b[0;36m\n ce->iterator_funcs.funcs->zf_rewind "<< ce->iterator_funcs.funcs->zf_rewind <<" \n\x1b[0m";
-    
-    
-
-}
-
-HashItemTraversable::~HashItemTraversable()
-{
-    std::cout << "\x1b[0;36m\n DESTRUCT  ~HashItemTraversable \n\x1b[0m";
-    // release all resources associated with this iterator instance
-    //funcs->dtor(iter);
-
-    // ##############
-    
 }
 
 /**
