@@ -22,7 +22,7 @@ public:
      *  Constructor ValueIterator
      *  @param  arr HashTable
      */
-    ValueIterator(HashItem *phi): phItem(phi)
+    ValueIterator(HashItem *phi): ItemPos(phi)
     {
         phi->reset();
     }
@@ -31,7 +31,7 @@ public:
      *  Constructor for empty ValueIterator.
      *  Used to finish the iterations
      */
-    ValueIterator(std::nullptr_t n) : phItem(nullptr) {}
+    ValueIterator(std::nullptr_t n) : ItemPos(nullptr) {}
 
     /**
      *  Copy Constructor
@@ -43,9 +43,9 @@ public:
      */
     ValueIterator(ValueIterator&& that)
     {
-        phItem = that.phItem;
+        ItemPos = that.ItemPos;
         // clear the other object
-        that.phItem = nullptr;
+        that.ItemPos = nullptr;
     }
 
     /**
@@ -53,9 +53,9 @@ public:
      */
     Value &operator=(ValueIterator&& that)
     {
-        phItem = that.phItem;
+        ItemPos = that.ItemPos;
         // clear the other object
-        that.phItem = nullptr;
+        that.ItemPos = nullptr;
     }
 
     /**
@@ -93,7 +93,7 @@ public:
         if( isEmpty() && !rhs.isEmpty() ) return false;
 
         // If both are not empty
-        return phItem->compare(rhs.phItem);
+        return ItemPos->compare(rhs.ItemPos);
     }
 
     bool operator!=(const ValueIterator& rhs) const
@@ -103,12 +103,12 @@ public:
 
     HashItem& operator*()
     {
-        return *phItem;
+        return *ItemPos;
     }
     
     HashItem* operator->()
     {
-        return phItem;
+        return ItemPos;
     }
 
     /**
@@ -117,7 +117,7 @@ public:
     ~ValueIterator()
     {
         // delete HashItem pointer
-        if(phItem) delete phItem;
+        if(ItemPos) delete ItemPos;
     }
 
 
@@ -128,8 +128,8 @@ private:
      */
     bool isEmpty() const
     {
-        // True, if phItem == nullptr or  phItem is empty.
-        return (!phItem || phItem->isEmpty());
+        // True, if ItemPos == nullptr or  ItemPos is empty.
+        return (!ItemPos || ItemPos->isEmpty());
     }
 
     /**
@@ -137,8 +137,8 @@ private:
      */
     bool next()
     {
-        // Only if phItem != nullptr
-        if(phItem) phItem->next();
+        // Only if ItemPos != nullptr
+        if(ItemPos) ItemPos->next();
     }
 
     /**
@@ -147,7 +147,7 @@ private:
      *  (if the internal array does not exist, then nullptr).
      *  @var HashItem*
      */
-    HashItem *phItem;
+    HashItem *ItemPos;
 };
 
 /**
