@@ -63,6 +63,13 @@ public:
         // clear the other object
         that.phItem = nullptr;
     }
+    Value &operator=(ValueIterator&& that)
+    {
+        std::cout << "\x1b[1;34m\n Move assigment \n\x1b[0;0m";
+        phItem = that.phItem;
+        // clear the other object
+        that.phItem = nullptr;
+    }
 
 
     /**
@@ -79,23 +86,15 @@ public:
      *  Increment prefix operator
      */
     ValueIterator& operator++() {
-        std::cout << "\x1b[0;31m\n ValueIterator& operator++() \n\x1b[0m";
-        phItem->next();
+        std::cout << "\x1b[0;31m\n ValueIterator& operator++("<<phItem<<") \n\x1b[0m";
+        next();
         return *this;
     }
 
     /**
      *  Increment postfix operator
      */
-    /*
-    ValueIterator operator++(int) {
-        ValueIterator tmp(*this);
-        operator++();
-        return tmp;
-    }
-    */
     ValueIterator& operator++(int) {
-        std::cout << "\x1b[0;31m\n ValueIterator& operator++(int) \n\x1b[0m";
         return operator++();
         //ValueIterator tmp(*this);
         //operator++();
@@ -104,7 +103,7 @@ public:
 
     ValueIterator& operator+=(unsigned int n)
     {
-        for(unsigned int i=0; i < n; ++i) phItem->next();
+        for(unsigned int i=0; i < n; ++i) next();
         return *this;
     }
 
@@ -144,6 +143,15 @@ private:
     {
         // True, if phItem == nullptr or  phItem is empty.
         return (!phItem || phItem->isEmpty());
+    }
+
+    /**
+     *  next iteration
+     */
+    bool next()
+    {
+        // Only if phItem != nullptr
+        if(phItem) phItem->next();
     }
 
     // Position in the internal hash table. Pointer to HashItem
