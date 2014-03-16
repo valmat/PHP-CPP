@@ -856,7 +856,7 @@ private:
      *  Pointer to a position in the embedded array (if the internal array does not exist, then nullptr).
      *  @var HashItem*
      */
-     HashItem *_hashitem = nullptr;
+     //HashItem *_hashitem = nullptr;
 
 protected:
     /**

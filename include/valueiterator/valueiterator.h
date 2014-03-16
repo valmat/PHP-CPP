@@ -22,7 +22,48 @@ public:
      *  Constructor for empty ValueIterator.
      *  Used to finish the iterations
      */
-    ValueIterator(std::nullptr_t n) : phItem(nullptr) {}
+    ValueIterator(std::nullptr_t n) : phItem(nullptr) {
+        std::cout << "\x1b[1;32m\n ValueIterator(std::nullptr_t n) \n\x1b[0;0m";
+    }
+    ~ValueIterator() {
+        std::cout << "\x1b[1;33m\n ~ValueIterator(" << phItem << ") \n\x1b[0;0m";
+
+        // delete HashItem pointer
+        if(phItem) delete phItem;
+
+    }
+
+    /**
+     *  Copy Constructor
+     */
+    ValueIterator(const ValueIterator& that) = delete;
+    /*
+    ValueIterator(const ValueIterator& that) : phItem(that.phItem)
+    {
+        std::cout << "\x1b[1;34m\n Copy Constructor \n\x1b[0;0m";
+    }
+    */
+
+    /**
+     *  Move Constructor
+     */
+    /*
+    ValueIterator(ValueIterator&& that) : phItem(std::move(that.phItem))
+    {
+        std::cout << "\x1b[1;34m\n Move Constructor \n\x1b[0;0m";
+    }
+    */
+    /**
+     *  Move constructor
+     */
+    ValueIterator(ValueIterator&& that)
+    {
+        std::cout << "\x1b[1;34m\n Move Constructor \n\x1b[0;0m";
+        phItem = that.phItem;
+        // clear the other object
+        that.phItem = nullptr;
+    }
+
 
     /**
      *  Constructor ValueIterator
@@ -30,6 +71,7 @@ public:
      */
     ValueIterator(HashItem *phi): phItem(phi)
     {
+        std::cout << "\x1b[1;32m\n ValueIterator(HashItem *phi) \n\x1b[0;0m";
         phi->reset();
     }
 
@@ -37,6 +79,7 @@ public:
      *  Increment prefix operator
      */
     ValueIterator& operator++() {
+        std::cout << "\x1b[0;31m\n ValueIterator& operator++() \n\x1b[0m";
         phItem->next();
         return *this;
     }
@@ -44,11 +87,27 @@ public:
     /**
      *  Increment postfix operator
      */
+    /*
     ValueIterator operator++(int) {
         ValueIterator tmp(*this);
         operator++();
         return tmp;
     }
+    */
+    ValueIterator& operator++(int) {
+        std::cout << "\x1b[0;31m\n ValueIterator& operator++(int) \n\x1b[0m";
+        return operator++();
+        //ValueIterator tmp(*this);
+        //operator++();
+        //return tmp;
+    }
+
+    ValueIterator& operator+=(unsigned int n)
+    {
+        for(unsigned int i=0; i < n; ++i) phItem->next();
+        return *this;
+    }
+
 
     /**
      *  compare operator
