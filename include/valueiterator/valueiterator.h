@@ -141,7 +141,12 @@ private:
         if(phItem) phItem->next();
     }
 
-    // Position in the internal hash table. Pointer to HashItem
+    /**
+     *  HashItem pointer
+     *  Pointer to a position in the internal array/oblect/traversable.
+     *  (if the internal array does not exist, then nullptr).
+     *  @var HashItem*
+     */
     HashItem *phItem;
 };
 
