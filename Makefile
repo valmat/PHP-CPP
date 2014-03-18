@@ -20,6 +20,17 @@ PHP_DIR         =   /usr/include/php5
 
 
 #
+#   PHP binary file
+#
+#   The path to the executable PHP binary file.
+#   Need to run tests.
+#   You can see the command "whereis php"
+#
+
+PHP_BIN         =   /usr/bin/php
+
+
+#
 #   Installation directory
 #
 #   When you install the PHP-CPP library, it will place a number of C++ *.h 
@@ -80,8 +91,11 @@ COMPILER_FLAGS  =   -Wall -c -I. -I${PHP_DIR} -I${PHP_DIR}/main -I${PHP_DIR}/ext
 #   Just like the compiler, the linker can have flags too. The default flag
 #   is probably the only one you need.
 #
+#   Are you compiling on OSX? You may have to append the option "-undefined dynamic_lookup"
+#   to the linker flags
+#
 
-LINKER_FLAGS    =   -shared
+LINKER_FLAGS    =   -shared `php-config --ldflags`
 
 
 #
@@ -123,6 +137,10 @@ OBJECTS         =   $(SOURCES:%.cpp=%.o)
 #
 
 all: ${OBJECTS} ${RESULT}
+	@echo
+	@echo "Build complete."
+	@echo "Don't forget to run 'make test'."
+	@echo
 
 ${RESULT}: ${OBJECTS}
 	${LINKER} ${LINKER_FLAGS} -o $@ ${OBJECTS}
@@ -138,4 +156,6 @@ install:
 	${CP} phpcpp.h ${INSTALL_HEADERS}
 	${CP} include/*.h ${INSTALL_HEADERS}/phpcpp
 	${CP} ${RESULT} ${INSTALL_LIB}
+test:
+	cd tests && ./test.sh -p ${PHP_BIN}
 
