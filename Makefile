@@ -154,5 +154,5 @@ install:
 	${CP} include/*.h ${INSTALL_HEADERS}/phpcpp
 	${CP} ${RESULT} ${INSTALL_LIB}
 test:
-	cd tests && ./test.sh ${PHP_BIN}
+	cd tests && ./test.sh -p ${PHP_BIN}
 
