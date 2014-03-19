@@ -34,6 +34,9 @@
 #include <php.h>
 #include "zend_exceptions.h"
 #include "zend_interfaces.h"
+#if PHP_VERSION_ID >= 50500
+#include "zend_generators.h"
+#endif
 
 /**
  *  Macro to convert results to success status
