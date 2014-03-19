@@ -30,13 +30,13 @@
 #include <phpcpp/value.h>
 
 #include <phpcpp/valueiterator/hashitem.h>
-#include <phpcpp/valueiterator/hashpositionwrapper.h>
-#include <phpcpp/valueiterator/hashitemarray.h>
-#include <phpcpp/valueiterator/hashitemobject.h>
-#include <phpcpp/valueiterator/hashitemarrayreverse.h>
-#include <phpcpp/valueiterator/hashitemobjectreverse.h>
-#include <phpcpp/valueiterator/hashitemiterator.h>
-#include <phpcpp/valueiterator/hashitemaggregate.h>
+#include <phpcpp/valueiterator/hashposition_wrapper.h>
+#include <phpcpp/valueiterator/hashitem_array.h>
+#include <phpcpp/valueiterator/hashitem_object.h>
+#include <phpcpp/valueiterator/hashitem_array_reverse.h>
+#include <phpcpp/valueiterator/hashitem_object_reverse.h>
+#include <phpcpp/valueiterator/hashitem_iterator.h>
+#include <phpcpp/valueiterator/hashitem_aggregate.h>
 #include <phpcpp/valueiterator/valueiterator.h>
 
 #include <phpcpp/array.h>
