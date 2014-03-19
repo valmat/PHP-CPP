@@ -1,8 +1,8 @@
 /**
- *  hashitemtraversable.h
+ *  hashitemaggregate.h
  *
  *
- *  HashItemTraversable - allows iterate objects of a class that implements the PHP Traversable interface
+ *  HashItemAggregate - allows iterate objects of a class that implements the PHP Aggregate interface
  *
  *
  *  @copyright 2013 Copernica BV
@@ -15,15 +15,15 @@
 namespace Php {
 	
 
-class HashItemTraversable : public HashItem
+class HashItemAggregate : public HashItem
 {
 public:
 
     /**
-     *  Constructor HashItemTraversable
+     *  Constructor HashItemAggregate
      *  @param  arr HashTable
      */
-    HashItemTraversable(_zend_class_entry* ce, _zval_struct* val);
+    HashItemAggregate(_zend_class_entry* ce, _zval_struct* val);
 
     /**
      *  retrieve data value
@@ -70,7 +70,7 @@ public:
      */
     virtual bool compare(const HashItem *rhs) const override;
 
-    virtual ~HashItemTraversable() {}
+    virtual ~HashItemAggregate() {}
 
 private:
     

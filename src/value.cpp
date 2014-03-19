@@ -1589,19 +1589,42 @@ Value::iterator Value::begin()
     {
         zend_class_entry *ce = zend_get_class_entry(_val);
 
+
+
+
+        //std::cout << " :" << instanceof_function_ex(ce, zend_ce_arrayaccess, 1);
+
+        std::cout << "\n\nzend_ce_traversable :"  << (instanceof_function_ex(ce, zend_ce_traversable, 1) ? "Y" : "n" );
+        std::cout << "\n\nzend_ce_aggregate :"    << (instanceof_function_ex(ce, zend_ce_aggregate, 1)   ? "Y" : "n" );
+        std::cout << "\n\nzend_ce_iterator :"     << (instanceof_function_ex(ce, zend_ce_iterator, 1)    ? "Y" : "n" );
+
+
+/*
+zend_ce_traversable
+zend_ce_aggregate
+zend_ce_iterator
+zend_ce_arrayaccess
+zend_ce_serializable
+        bool is traversable = 
+        bool is aggregate = 
+        bool is iterator = 
+*/
+
+        //return nullptr;
+
         // If the object class implements iterator or traversable
-        if(ce->get_iterator)
+        if( instanceof_function_ex(ce, zend_ce_traversable, 1) )
         {
             
             // if this object is an instance of a class that implements the Iterator (PHP-interface)
-            if(ce->iterator_funcs.funcs)
+            if( instanceof_function_ex(ce, zend_ce_iterator, 1) )
             {
                 return new HashItemIterator(ce, _val);
             }
-            //if this object is an instance of a class that implements the Traversable (PHP-interface)
-            else 
+            //if this object is an instance of a class that implements the Aggregate (PHP-interface)
+            else if( instanceof_function_ex(ce, zend_ce_aggregate, 1) )
             {
-                return new HashItemTraversable(ce, _val);
+                return new HashItemAggregate(ce, _val);
             }
 
         }

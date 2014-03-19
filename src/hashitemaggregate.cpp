@@ -1,8 +1,8 @@
 /**
- *  hashitemtraversable.cpp
+ *  hashitemaggregate.cpp
  *
  *
- *  HashItemTraversable - allows iterate objects of a class that implements the PHP Traversable interface
+ *  HashItemAggregate - allows iterate objects of a class that implements the PHP Aggregate interface
  *
  *
  *  @copyright 2013 Copernica BV
@@ -15,10 +15,10 @@
 namespace Php {
 
 /**
- *  Constructor HashItemTraversable
+ *  Constructor HashItemAggregate
  *  @param  arr HashTable
  */
-HashItemTraversable::HashItemTraversable(zend_class_entry *ce, zval *pval)
+HashItemAggregate::HashItemAggregate(zend_class_entry *ce, zval *pval)
 {
 	iter = zend_user_it_get_new_iterator(ce, pval,0);
 }
@@ -26,7 +26,7 @@ HashItemTraversable::HashItemTraversable(zend_class_entry *ce, zval *pval)
 /**
  *  retrieve data value
  */
-Value HashItemTraversable::value() const 
+Value HashItemAggregate::value() const 
 {
     // fetch the item data for the current element
     zval **pval;
@@ -38,7 +38,7 @@ Value HashItemTraversable::value() const
 /**
  *  return key
  */
-Value HashItemTraversable::key() const
+Value HashItemAggregate::key() const
 {
     // fetch the key for the current element. 
     // The key should be written into the provided zval* using the ZVAL_* macros.
@@ -54,7 +54,7 @@ Value HashItemTraversable::key() const
 /**
  *  return integer key (index)
  */
-unsigned long HashItemTraversable::intKey() const
+unsigned long HashItemAggregate::intKey() const
 {
     zval zv;
     zend_user_it_get_current_key(iter, &zv);
@@ -64,7 +64,7 @@ unsigned long HashItemTraversable::intKey() const
 /**
  *  return string key
  */
-std::string HashItemTraversable::strKey() const
+std::string HashItemAggregate::strKey() const
 {
     zval zv;
     zend_user_it_get_current_key(iter, &zv);
@@ -74,7 +74,7 @@ std::string HashItemTraversable::strKey() const
 /**
  *  key type is string?
  */
-bool HashItemTraversable::isstr() const
+bool HashItemAggregate::isstr() const
 {
     zval zv;
     zend_user_it_get_current_key(iter, &zv);
@@ -84,7 +84,7 @@ bool HashItemTraversable::isstr() const
 /**
  *  item on current position of hashtable is empty?
  */
-bool HashItemTraversable::isEmpty() const
+bool HashItemAggregate::isEmpty() const
 {
     // check for end of iteration (FAILURE or SUCCESS if data is valid)
     return ( FAILURE == zend_user_it_valid(iter) );
@@ -93,7 +93,7 @@ bool HashItemTraversable::isEmpty() const
 /**
  *  next iteration
  */
-void HashItemTraversable::next()
+void HashItemAggregate::next()
 {
     // step forwards to next element
     zend_user_it_move_forward(iter);
@@ -102,7 +102,7 @@ void HashItemTraversable::next()
 /**
  *  reset iterator to beginning of the hash table
  */
-void HashItemTraversable::reset()
+void HashItemAggregate::reset()
 {
     // rewind to start of data
     zend_user_it_rewind(iter);
@@ -111,11 +111,11 @@ void HashItemTraversable::reset()
 /**
  *  compare operator
  */
-bool HashItemTraversable::compare(const HashItem *rhs) const
+bool HashItemAggregate::compare(const HashItem *rhs) const
 {
     zval thisKey, thatKey;
     zend_user_it_get_current_key(iter, &thisKey);
-    zend_user_it_get_current_key( ((HashItemTraversable *)rhs)->iter, &thatKey);
+    zend_user_it_get_current_key( ((HashItemAggregate *)rhs)->iter, &thatKey);
 
     return (
                 thisKey.type          == thatKey.type          && 
