@@ -47,6 +47,7 @@
 #include <phpcpp/byval.h>
 #include <phpcpp/byref.h>
 #include <phpcpp/global.h>
+#include <phpcpp/super.h>
 #include <phpcpp/hashmember.h>
 #include <phpcpp/parameters.h>
 #include <phpcpp/modifiers.h>
@@ -55,11 +56,10 @@
 #include <phpcpp/arrayaccess.h>
 #include <phpcpp/iterator.h>
 #include <phpcpp/traversable.h>
+#include <phpcpp/serializable.h>
 #include <phpcpp/classtype.h>
 #include <phpcpp/classbase.h>
 #include <phpcpp/class.h>
-#include <phpcpp/abstractclass.h>
-#include <phpcpp/finalclass.h>
 #include <phpcpp/interface.h>
 #include <phpcpp/namespace.h>
 #include <phpcpp/extension.h>

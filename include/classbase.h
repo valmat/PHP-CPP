@@ -20,11 +20,24 @@
 struct _zend_object_value;
 struct _zend_object_handlers;
 struct _zend_class_entry;
+struct _zend_serialize_data;
+struct _zend_unserialize_data;
+union _zend_function;
 
 /**
  *  Set up namespace
  */
 namespace Php {
+
+/**
+ *  A couple of predefined native callback functions that can be registered.
+ *  These are functions that optional accept a Request and/or Parameters object,
+ *  and that either return void or a Value object. 
+ */
+typedef void    (*native_callback_0)();
+typedef void    (*native_callback_1)(Parameters &);
+typedef Value   (*native_callback_2)();
+typedef Value   (*native_callback_3)(Parameters &);
 
 /**
  *  Method signatures
@@ -39,10 +52,19 @@ typedef Value   (Base::*method_callback_6)() const;
 typedef Value   (Base::*method_callback_7)(Parameters &) const;
 
 /**
+ *  Signatures for getters and setters
+ */
+typedef Value   (Base::*getter_callback_0)();
+typedef Value   (Base::*getter_callback_1)() const;
+typedef void    (Base::*setter_callback_0)(const Php::Value &value);
+typedef void    (Base::*setter_callback_1)(const Php::Value &value) const;
+
+/**
  *  Forward declarations
  */
 class Method;
 class Member;
+class Property;
 
 /**
  *  Class definition
@@ -53,9 +75,16 @@ protected:
     /**
      *  Protected constructor
      *  @param  classname   Class name
-     *  @param  type        The class type
+     *  @param  flags       Class flags
      */
-    ClassBase(const char *classname, ClassType type = ClassType::Regular) : _name(classname), _type(type) {}
+    ClassBase(const char *classname, int flags);
+        
+    /**
+     *  Protected constructor
+     *  @param  classname   Class name
+     *  @param  type        Class type
+     */
+    ClassBase(const char *classname, ClassType type) : _name(classname), _type(type) {}
     
 public:
     /**
@@ -67,7 +96,7 @@ public:
         _type(that._type), 
         _methods(that._methods), 
         _members(that._members), 
-        _interfaces(that._interfaces),
+        _properties(that._properties),
         _entry(nullptr) {}
 
     /**
@@ -79,7 +108,7 @@ public:
         _type(that._type), 
         _methods(std::move(that._methods)), 
         _members(std::move(that._members)), 
-        _interfaces(std::move(that._interfaces)),
+        _properties(std::move(that._properties)),
         _entry(that._entry) 
     {
         // other entry are invalid now (not that it is used..., class objects are
@@ -94,25 +123,6 @@ public:
     virtual ~ClassBase();
 
     /**
-     *  Construct a new instance of the object
-     *  @return Base
-     */
-    virtual Base* construct() const = 0;
-    
-    /**
-     *  Create a clone of an object
-     *  @param  orig
-     *  @return Base
-     */
-    virtual Base *clone(Base *orig) const = 0;
-
-    /**
-     *  Is this a traversable class?
-     *  @return bool
-     */
-    virtual bool traversable() const = 0;
-
-    /**
      *  Initialize the class, given its name
      * 
      *  The module functions are registered on module startup, but classes are
@@ -125,8 +135,80 @@ public:
      */
     void initialize(const std::string &ns);
 
+protected:
+    /**
+     *  Construct a new instance of the object, or to clone the object
+     *  @return Base
+     */
+    virtual Base* construct() const { return nullptr; }
+    virtual Base *clone(Base *orig) const { return nullptr; }
+
+    /**
+     *  Methods to check if a certain interface is overridden, or a copy
+     *  constructor is available
+     *  @return bool
+     */
+    virtual bool traversable() const { return false; }
+    virtual bool serializable() const { return false; }
+    virtual bool clonable() const { return false; }
+
+    /**
+     *  Compare two objects
+     *  @param  object1
+     *  @param  object2
+     *  @return int
+     */
+    virtual int callCompare(Base *object1, Base *object2) const { return 1; }
+    
+    /**
+     *  Call the __clone and __destruct magic methods
+     *  @param  base
+     */
+    virtual void callClone(Base *base) const {}
+    virtual void callDestruct(Base *base) const {}
+    
+    /**
+     *  Call the __call(), __invoke() or __callStatic() method
+     *  @param  base        Object to call on
+     *  @param  name        Name of the method
+     *  @param  params      Parameters to pass to the method
+     *  @return Value
+     */
+    virtual Value callCall(Base *base, const char *name, Parameters &params) const { return nullptr; }
+    virtual Value callInvoke(Base *base, Parameters &params) const { return nullptr; }
+    virtual Value callCallStatic(const char *name, Parameters &params) const { return nullptr; }
+    
+    /**
+     *  Casting functions
+     *  @param  base
+     *  @return Value
+     */
+    virtual Value callToString(Base *base) const { return Value(Type::String); }
+    virtual Value callToInteger(Base *base) const { return Value(Type::Numeric); }
+    virtual Value callToFloat(Base *base) const { return Value(Type::Float); }
+    virtual Value callToBool(Base *base) const { return Value(Type::Bool); }
+    
+    /**
+     *  Function to get and set properties
+     *  @param  base
+     *  @param  name
+     *  @param  value
+     *  @return Value
+     */
+    virtual Value callGet(Base *base, const Value &name) const { return nullptr; }
+    virtual void  callSet(Base *base, const Value &name, const Value &value) const {}
+    virtual void  callUnset(Base *base, const Value &name) const {}
+    virtual bool  callIsset(Base *base, const Value &name) const { return false; }
+    
+
     
 protected:
+    /**
+     *  Function that can be called by a derived method when a certain function
+     *  is not implemented
+     */
+    static void notImplemented();
+
     /**
      *  Add a method to the class
      *  
@@ -142,14 +224,31 @@ protected:
      *  @param  flags       Optional flags
      *  @param  args        Description of the supported arguments
      */
-    void method(const char *name, method_callback_0, int flags=0, const Arguments &args = {});
-    void method(const char *name, method_callback_1, int flags=0, const Arguments &args = {});
-    void method(const char *name, method_callback_2, int flags=0, const Arguments &args = {});
-    void method(const char *name, method_callback_3, int flags=0, const Arguments &args = {});
-    void method(const char *name, method_callback_4, int flags=0, const Arguments &args = {});
-    void method(const char *name, method_callback_5, int flags=0, const Arguments &args = {});
-    void method(const char *name, method_callback_6, int flags=0, const Arguments &args = {});
-    void method(const char *name, method_callback_7, int flags=0, const Arguments &args = {});
+    void method(const char *name, const method_callback_0 &method, int flags=0, const Arguments &args = {});
+    void method(const char *name, const method_callback_1 &method, int flags=0, const Arguments &args = {});
+    void method(const char *name, const method_callback_2 &method, int flags=0, const Arguments &args = {});
+    void method(const char *name, const method_callback_3 &method, int flags=0, const Arguments &args = {});
+    void method(const char *name, const method_callback_4 &method, int flags=0, const Arguments &args = {});
+    void method(const char *name, const method_callback_5 &method, int flags=0, const Arguments &args = {});
+    void method(const char *name, const method_callback_6 &method, int flags=0, const Arguments &args = {});
+    void method(const char *name, const method_callback_7 &method, int flags=0, const Arguments &args = {});
+
+    /**
+     *  Add a static method to the class
+     * 
+     *  Because a C++ static method is just a regular function, that happens to
+     *  have access to the private variables of the class at compile time, you
+     *  can register any function that matches one of the function signatures
+     *  
+     *  @param  name        Name of the method
+     *  @param  method      The actual method
+     *  @param  flags       Optional flags
+     *  @param  args        Description of the supported arguments
+     */
+    void method(const char *name, const native_callback_0 &method, int flags=0, const Arguments &args = {});
+    void method(const char *name, const native_callback_1 &method, int flags=0, const Arguments &args = {});
+    void method(const char *name, const native_callback_2 &method, int flags=0, const Arguments &args = {});
+    void method(const char *name, const native_callback_3 &method, int flags=0, const Arguments &args = {});
 
     /**
      *  Add an abstract method to the class
@@ -184,33 +283,17 @@ protected:
     void property(const char *name, double value, int flags = Php::Public);
 
     /**
-     *  Add an implemented interface
-     *  
-     *  This can only be used to register interfaces that are already defined
-     *  by Zend, and not for user space interface or custom extension interfaces.
-     *  This is probably not so much of a problem, as this feature is mostly
-     *  useful for interfaces like 'Countable', 'ArrayAccess', 'Iterator', et
-     *  cetera. Interfaces defined in user space are in normal operations
-     *  inaccessible (user space code normally runs after the extension has been 
-     *  set up) - so we do not need a feature to set these.
-     * 
-     *  It does however make sense to support implementing extension-specific
-     *  interface. We may add this feature in the future.
-     * 
-     *  This method is called _during_ the get_module() call when all classes
-     *  are defined by the extension. However, at that time the Zend engine has
-     *  not yet initialized the zend_class_entry's with the interface addresses.
-     *  That's why we ask for a pointer-to-a-pointer. Later, when the classes
-     *  are really registered, the Zend engine is with registering interfaces
-     *  and the pointers point to a valid variable.
-     * 
-     *  @param  interface
+     *  Set property with callbacks
+     *  @param  name        Name of the property
+     *  @param  getter      Getter method
+     *  @param  setter      Setter method
      */
-    void interface(struct ::_zend_class_entry **interface)
-    {
-        // register the interface
-        _interfaces.push_back(interface);
-    }
+    void property(const char *name, const getter_callback_0 &getter);
+    void property(const char *name, const getter_callback_1 &getter);
+    void property(const char *name, const getter_callback_0 &getter, const setter_callback_0 &setter);
+    void property(const char *name, const getter_callback_1 &getter, const setter_callback_0 &setter);
+    void property(const char *name, const getter_callback_0 &getter, const setter_callback_1 &setter);
+    void property(const char *name, const getter_callback_1 &getter, const setter_callback_1 &setter);
 
 private:
     /**
@@ -224,19 +307,34 @@ private:
     const struct _zend_function_entry *entries();
 
     /**
-     *  Static member functions to clone objects based on this class
+     *  Helper method to turn a property into a zval
+     *  @param  value
+     *  @param  type
+     *  @return Value
+     */
+    static struct _zval_struct *toZval(Value &&value, int type);
+
+    /**
+     *  Static member functions to create or clone objects based on this class
+     *  @param  entry                   Pointer to class information
      *  @param  val                     The object to be cloned
      *  @return zend_object_value       Object info
      */
+    static struct _zend_object_value createObject(struct _zend_class_entry *entry);
     static struct _zend_object_value cloneObject(struct _zval_struct *val);
+    static void destructObject(struct _zend_object *object, unsigned int handle);
+    static void freeObject(struct _zend_object *object);
 
     /**
-     *  Function that is called when an instance of the class needs to be created.
-     *  This function will create the C++ class, and the PHP object
-     *  @param  entry                   Pointer to the class information
-     *  @return zend_object_value       The newly created object
+     *  Static member function that get called when a method or object is called
+     *  @param  ht                      ??
+     *  @param  return_value            Zval holding the variable to store the return value in
+     *  @param  return_value_ptr        Pointer to the same zval
+     *  @param  this_ptr                Object being called
+     *  @param  return_value_used       Is the return value used or not?
      */
-    static struct _zend_object_value createObject(struct _zend_class_entry *entry);
+    static void callMethod(int ht, struct _zval_struct *return_value, struct _zval_struct **return_value_ptr, struct _zval_struct *this_ptr, int return_value_used);
+    static void callInvoke(int ht, struct _zval_struct *return_value, struct _zval_struct **return_value_ptr, struct _zval_struct *this_ptr, int return_value_used);
 
     /**
      *  Function that is used to count the number of elements in the object
@@ -286,7 +384,7 @@ private:
      *  Retrieve pointer to our own object handlers
      *  @return zend_object_handlers
      */
-    static struct _zend_object_handlers *objectHandlers();
+    struct _zend_object_handlers *objectHandlers();
 
     /**
      *  Function to create a new iterator to iterate over an object
@@ -296,6 +394,106 @@ private:
      *  @return zend_object_iterator*   Pointer to the iterator
      */
     static struct _zend_object_iterator *getIterator(struct _zend_class_entry *entry, struct _zval_struct *object, int by_ref);
+
+    /**
+     *  Function that is called when a property is being read
+     *  @param  object          The object on which it is called
+     *  @param  offset          The name of the property
+     *  @param  type            The type of the variable???
+     *  @param  key             ???
+     *  @return zval
+     */
+    static struct _zval_struct *readProperty(struct _zval_struct *object, struct _zval_struct *name, int type, const struct _zend_literal *key);
+    static struct _zval_struct *readProperty(struct _zval_struct *object, struct _zval_struct *name, int type);
+
+    /**
+     *  Function that is called when a property is set / updated
+     *  @param  object          The object on which it is called
+     *  @param  name            The name of the property
+     *  @param  value           The new value
+     *  @param  key             ???
+     *  @return zval
+     */
+    static void writeProperty(struct _zval_struct *object, struct _zval_struct *name, struct _zval_struct *value, const struct _zend_literal *key);
+    static void writeProperty(struct _zval_struct *object, struct _zval_struct *name, struct _zval_struct *value);
+
+    /**
+     *  Function that is called to check whether a certain property is set
+     *  @param  object          The object on which it is called
+     *  @param  name            The name of the property to check
+     *  @param  has_set_exists  See above
+     *  @return bool
+     */
+    static int hasProperty(struct _zval_struct *object, struct _zval_struct *name, int has_set_exists, const struct _zend_literal *key);
+    static int hasProperty(struct _zval_struct *object, struct _zval_struct *name, int has_set_exists);
+
+    /**
+     *  Function that is called when a property is removed from the project
+     *  @param  object          The object on which it is called
+     *  @param  member          The member to remove
+     */
+    static void unsetProperty(struct _zval_struct *object, struct _zval_struct *member, const struct _zend_literal *key);
+    static void unsetProperty(struct _zval_struct *object, struct _zval_struct *member);
+
+    /**
+     *  Method that returns information about the function signature of a undefined method
+     *  @param  object_ptr
+     *  @param  method
+     *  @param  method_len
+     *  @param  key
+     *  @return zend_function
+     */
+    static union _zend_function *getMethod(struct _zval_struct **object_ptr, char *method, int method_len, const struct _zend_literal *key);
+    static union _zend_function *getMethod(struct _zval_struct **object_ptr, char *method, int method_len);
+
+    /**
+     *  Method that returns information about the function signature of an undefined static method
+     *  @param  object_ptr
+     *  @param  method
+     *  @param  method_len
+     *  @param  key
+     *  @return zend_function
+     */
+    static union _zend_function *getStaticMethod(struct _zend_class_entry *entry, char* method, int method_len);
+
+    /**
+     *  Method that returns information about the __invoke() method
+     *  @param  object
+     *  @param  entry
+     *  @param  func
+     *  @param  object_ptr
+     *  @return int
+     */
+    static int getClosure(struct _zval_struct *object, struct _zend_class_entry **entry, union _zend_function **func, struct _zval_struct **object_ptr);
+
+    /**
+     *  Function to cast the object to a different type
+     *  @param  object
+     *  @param  retval
+     *  @param  type
+     *  @return int
+     */
+    static int cast(struct _zval_struct *object, struct _zval_struct *retval, int type);
+
+    /**
+     *  Function to compare two objects
+     *  @param  object1
+     *  @param  object2
+     *  @return int
+     */
+    static int compare(struct _zval_struct *object1, struct _zval_struct *object2);
+
+    /**
+     *  Methods that are called to serialize/unserialize an object
+     *  @param  object      The object to be serialized
+     *  @param  entry       The class entry to which the object belongs
+     *  @param  buffer      Buffer in which to store the data
+     *  @param  buf_len     Size of the bufffer
+     *  @param  data        Structure describing the serialize/unserialize data
+     *  @return int
+     */
+    static int serialize(struct _zval_struct *object, unsigned char **buffer, unsigned int *buf_len, struct _zend_serialize_data *data);
+    static int unserialize(struct _zval_struct **object, struct _zend_class_entry *entry, const unsigned char *buffer, unsigned int buf_len, struct _zend_unserialize_data *data);
 
     /**
      *  Name of the class
@@ -340,11 +538,16 @@ private:
     std::list<std::shared_ptr<Member>> _members;
     
     /**
-     *  All interfaces that are implemented
-     *  @var    std::list
+     *  Map of dynamically accessible properties
+     *  @var    std::map
      */
-    std::list<struct ::_zend_class_entry**> _interfaces;
+    std::map<std::string,std::shared_ptr<Property>> _properties;
     
+    /**
+     *  Base object has access to the members
+     *  This is needed by the Base::store() method
+     */
+    friend class Base;
 };
     
 /**

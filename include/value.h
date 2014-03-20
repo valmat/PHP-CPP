@@ -315,6 +315,17 @@ public:
     Value operator%(double value);
     
     /**
+     *  Comparison operators for hardcoded strings
+     *  @param  value
+     */
+    bool operator==(const char *value) const { return ::strcmp(rawValue(), value) == 0; }
+    bool operator!=(const char *value) const { return ::strcmp(rawValue(), value) != 0; }
+    bool operator<=(const char *value) const { return ::strcmp(rawValue(), value) <= 0; }
+    bool operator>=(const char *value) const { return ::strcmp(rawValue(), value) >= 0; }
+    bool operator< (const char *value) const { return ::strcmp(rawValue(), value) <  0; }
+    bool operator> (const char *value) const { return ::strcmp(rawValue(), value) >  0; }
+
+    /**
      *  Comparison operators
      *  @param  value
      */
@@ -362,32 +373,54 @@ public:
     bool isObject()     const { return type() == Type::Object; }
     bool isArray()      const { return type() == Type::Array; }
     bool isCallable()   const;
+
+    /**
+     *  Get access to the raw buffer - you can use this for direct reading and
+     *  writing to and from the buffer. Note that this only works for string
+     *  variables - other variables return nullptr.
+     * 
+     *  If you are going to write to the buffer, make sure that you first call
+     *  the resize() method to ensure that the buffer is big enough.
+     *  
+     *  @return char *
+     */
+    char *buffer() const;
     
     /**
-     *  Is the variable empty?
-     *  @return bool
+     *  Resize buffer space. If you want to write directly to the buffer (which 
+     *  is returned by the buffer() method), you should first reserve enough 
+     *  space in it. This can be done with this resize() method. This will also 
+     *  turn the Value object into a string (if it was not already a string). 
+     *  The writable buffer is returned.
+     * 
+     *  @param  size
+     *  @return char* 
      */
-    bool isEmpty() const;
+    char *reserve(size_t size);
+    
+    /**
+     *  Get access to the raw buffer for read operationrs.
+     *  @return const char *
+     */
+    const char *rawValue() const;
     
     /**
      *  Retrieve the value as number
-     *  @return long
+     *
+     *  We force this to be a int64_t because we assume that most
+     *  servers run 64 bits nowadays, and because we use int32_t, int64_t
+     *  almost everywhere, instead of 'long' and on OSX neither of
+     *  these intxx_t types is defined as 'long'...
+     *
+     *  @return int64_t
      */
-    long numericValue() const;
+    int64_t numericValue() const;
     
     /**
      *  Retrieve the value as boolean
      *  @return bool
      */
     bool boolValue() const;
-    
-    /**
-     *  Retrieve the raw string value
-     *  Warning: Only use this for NULL terminated strings, or use it in combination 
-     *  with the string size to prevent that you access data outside the buffer
-     *  @return const char *
-     */
-    const char *rawValue() const;
     
     /**
      *  Retrieve the value as a string
@@ -412,6 +445,8 @@ public:
     template <typename T>
     std::vector<T> vectorValue() const
     {
+        
+        
         // only works for arrays, other types return an empty vector
         if (!isArray()) return std::vector<T>();
 
@@ -466,6 +501,35 @@ public:
     }
     
     /**
+     *  Embed type `iterator` in class Value.
+     */
+    typedef ValueIterator iterator;
+    
+    /**
+     *  Iterator to beginning
+     *  @return ValueIterator
+     */
+    iterator begin() const;
+
+    /**
+     *  Iterator to end
+     *  @return ValueIterator
+     */
+    iterator end() const;
+    
+    /**
+     *  Reverse Iterator to beginning
+     *  @return ValueIterator
+     */
+    iterator rbegin() const;
+
+    /**
+     *  Reverse Iterator to end
+     *  @return ValueIterator
+     */
+    iterator rend() const;
+    
+    /**
      *  The number of members in case of an array or object
      *  @return int
      */
@@ -513,6 +577,17 @@ public:
      *  @return bool
      */
     bool contains(const char *key, int size) const;
+
+    /**
+     *  Is a certain key set in the array
+     *  @param  key
+     *  @param  size
+     *  @return bool
+     */
+    bool contains(const char *key) const
+    {
+        return contains(key, strlen(key));
+    }
     
     /**
      *  Cast to a number
@@ -797,35 +872,6 @@ public:
         return dynamic_cast<T*>(base);
     }
 
-    /**
-     *  Embed type `iterator` in class Value.
-     */
-    typedef ValueIterator iterator;
-    
-    /**
-     *  Iterator to beginning
-     *  @return ValueIterator
-     */
-    iterator begin();
-
-    /**
-     *  Iterator to end
-     *  @return ValueIterator
-     */
-    iterator end() const;
-    
-    /**
-     *  Reverse Iterator to beginning
-     *  @return ValueIterator
-     */
-    iterator rbegin();
-
-    /**
-     *  Reverse Iterator to end
-     *  @return ValueIterator
-     */
-    iterator rend() const;
-
 private:
     /**
      *  Call function with a number of parameters
@@ -871,6 +917,18 @@ protected:
     struct _zval_struct *detach();
     
     /**
+     *  Attach a different zval
+     * 
+     *  This will first detach the current zval, and link the Value object to 
+     *  a different zval. Versions exist to attach to a zval and to an entire
+     *  hash table
+     * 
+     *  @param  val
+     */
+    void attach(struct _zval_struct *val);
+    void attach(struct _hashtable *hashtable);
+    
+    /**
      *  Set a certain property without running any checks (you must already know
      *  for sure that this is an array, and that the index is not yet in use)
      * 
@@ -899,6 +957,8 @@ protected:
     friend class Member;
     friend class ClassBase;
     friend class Iterator;
+    friend class Extension;
+    friend class ValueIterator;
 };
 
 /**

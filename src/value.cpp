@@ -22,7 +22,7 @@
  * 
  * 
  *  @author Emiel Bruijntjes <emiel.bruijntjes@copernica.com>
- *  @copyright 2013 Copernica BV
+ *  @copyright 2013, 2014 Copernica BV
  */
 #include "includes.h"
 
@@ -74,7 +74,7 @@ Value::Value(int32_t value)
 }
 
 /**
- *  Constructor based on long value
+ *  Constructor based on int64_t value
  *  @param  value
  */
 Value::Value(int64_t value)
@@ -214,6 +214,8 @@ Value::Value(const Value &that)
         // to the variable but have to allocate a new variable
         ALLOC_ZVAL(_val);
         INIT_PZVAL_COPY(_val, that._val);
+        
+        // we have to call the copy constructor to copy the entire other zval
         zval_copy_ctor(_val);
     }
     else
@@ -262,11 +264,8 @@ Value::Value(const Value &that)
  *  Move constructor
  *  @param  value
  */
-Value::Value(Value &&that)
+Value::Value(Value &&that) : _val(that._val)
 {
-    // just copy the zval
-    _val = that._val;
-
     // clear the other object
     that._val = nullptr;
 }
@@ -283,7 +282,7 @@ Value::~Value()
     // and only one reference will remain, the object will then impossible be
     // a reference
     if (Z_REFCOUNT_P(_val) <= 2) Z_UNSET_ISREF_P(_val);
-    
+
     // destruct the zval (this function will decrement the reference counter,
     // and only destruct if there are no other references left)
     zval_ptr_dtor(&_val);
@@ -302,6 +301,9 @@ Value::~Value()
  */
 zval *Value::detach()
 {
+    // leap out if already detached
+    if (!_val) return nullptr;
+    
     // copy return value
     zval *result = _val;
     
@@ -313,6 +315,50 @@ zval *Value::detach()
     
     // done
     return result;
+}
+
+/**
+ *  Attach a different zval
+ * 
+ *  This will first detach the current zval, and link the Value object to 
+ *  a different zval.
+ * 
+ *  @param  val
+ */
+void Value::attach(struct _zval_struct *val)
+{
+    // detach first
+    if (_val) detach();
+    
+    // store the zval
+    _val = val;
+    
+    // add one more reference
+    Z_ADDREF_P(_val);
+}
+
+/**
+ *  Attach a different zval
+ * 
+ *  This will first detach the current zval, and link the Value object to 
+ *  a new zval
+ * 
+ *  @param  hashtable
+ */
+void Value::attach(struct _hashtable *hashtable)
+{
+    // detach first
+    if (_val) detach();
+
+    // construct a new zval
+    MAKE_STD_ZVAL(_val);
+    
+    // store pointer to the hashtable, and mark the zval as an array
+    Z_ARRVAL_P(_val) = hashtable;
+    Z_TYPE_P(_val) = IS_ARRAY;
+
+    // add a reference
+    Z_ADDREF_P(_val);
 }
 
 /**
@@ -343,9 +389,6 @@ Value &Value::operator=(Value &&value)
         // keep the zval object, and copy the other value into it, get
         // the current refcount
         int refcount = Z_REFCOUNT_P(_val);
-        
-        // clean up the current zval (but keep the zval structure)
-        zval_dtor(_val);
         
         // make the copy
         *_val = *value._val;
@@ -1293,27 +1336,6 @@ bool Value::isCallable() const
 }
 
 /**
- *  Is the variable empty?
- *  @return bool
- */
-bool Value::isEmpty() const
-{
-    switch (type()) {
-    case    Type::Null:     return  true;
-    case    Type::Numeric:  return  numericValue() == 0;
-    case    Type::Float:    return  floatValue() == 0.0;
-    case    Type::Bool:     return  boolValue() == false;
-    case    Type::Array:    return  size() == 0;
-    case    Type::Object:   return  false;
-    case    Type::String:   return  size() == 0;
-    case    Type::Callable: return  false;
-    default:                return  false;
-    }
-    
-    // for the time being we consider resources and consts to be not-empty
-}
-
-/**
  *  Make a clone of the type
  *  @return Value
  */
@@ -1353,7 +1375,7 @@ Value Value::clone(Type type) const
  *  Retrieve the value as integer
  *  @return long
  */
-long Value::numericValue() const
+int64_t Value::numericValue() const
 {
     // already a long?
     if (isNumeric()) return Z_LVAL_P(_val);
@@ -1389,15 +1411,58 @@ std::string Value::stringValue() const
 }
 
 /**
- *  Retrieve raw string value
+ *  Access to the raw buffer
+ *  @return char *
+ */
+char *Value::buffer() const
+{
+    // must be a string
+    if (!isString()) return nullptr;
+    
+    // already a string?
+    return Z_STRVAL_P(_val);
+}
+
+/**
+ *  Reserve enough space
+ *  @param  size
+ *  @return char*
+ */
+char *Value::reserve(size_t size)
+{
+    // must be a string
+    setType(Type::String);
+ 
+    // is the current buffer too small?
+    if (Z_STRLEN_P(_val) < (int)size)
+    {
+        // is there already a buffer?
+        if (!Z_STRVAL_P(_val)) Z_STRVAL_P(_val) = (char *)emalloc(size+1);
+        
+        // reallocate an existing buffer
+        else Z_STRVAL_P(_val) = (char *)erealloc(Z_STRVAL_P(_val), size+1);
+
+        // last byte should be zero
+        Z_STRVAL_P(_val)[size] = 0;
+    }
+    
+    // store size
+    Z_STRLEN_P(_val) = size;
+    
+    // done
+    return Z_STRVAL_P(_val);
+}
+
+/**
+ *  Access to the raw buffer
  *  @return const char *
  */
 const char *Value::rawValue() const
 {
-    // already a string?
+    // must be a string
     if (isString()) return Z_STRVAL_P(_val);
     
-    // make a clone
+    // make a clone and return that buffer
     return clone(Type::String).rawValue();
 }
 
@@ -1469,7 +1534,8 @@ std::map<std::string,Php::Value> Value::mapValue() const
 {
     // result variable
     std::map<std::string,Php::Value> result;
-
+    
+    // iterate over the object
     for(auto &i: *this) 
     {
         result[i.strKey()] = i.value();
@@ -1481,9 +1547,10 @@ std::map<std::string,Php::Value> Value::mapValue() const
 
 /**
  *  Iterator to beginning
+ *  Return an iterator for iterating over the values
  *  @return ValueIterator
  */
-Value::iterator Value::begin()
+Value::iterator Value::begin() const
 {
     // check type
     if (isArray())
@@ -1541,6 +1608,7 @@ Value::iterator Value::begin()
 
 /**
  *  Iterator to end
+ *  Return an iterator for iterating over the values
  *  @return ValueIterator
  */
 Value::iterator Value::end() const 
@@ -1550,9 +1618,10 @@ Value::iterator Value::end() const
 
 /**
  *  Reverse Iterator to beginning
+ *  This is only meaningful for Value objects that hold an array or an object
  *  @return ValueIterator
  */
-Value::iterator Value::rbegin()
+Value::iterator Value::rbegin() const
 {
     // check type
     if (isArray())
@@ -1576,13 +1645,14 @@ Value::iterator Value::rbegin()
 
 /**
  *  Reverse Iterator to end
+ *  This is only meaningful for Value objects that hold an array or an object
  *  @return ValueIterator
  */
 Value::iterator Value::rend() const 
 {
     return nullptr;
 }
-    
+
 /**
  *  Does the array contain a certain index?
  *  @param  index
