@@ -84,6 +84,66 @@ extern "C"
         // C++ methods as regular global PHP functions
         extension.add("TestBaseClass\\staticFun1", &TestBaseClass::testStaticPrivClass::staticMethod);
 
+        // Modifers
+        extension.add(std::move(
+            Php::Class<TestBaseClass::TestModifers>("TestBaseClass\\TestModifers")
+                .method("testPublic", &TestBaseClass::TestModifers::testPublic, Php::Public)
+                .method("testProtected", &TestBaseClass::TestModifers::testProtected, Php::Protected)
+                .method("testPrivate", &TestBaseClass::TestModifers::testPrivate, Php::Private)
+                .method("testFinal", &TestBaseClass::TestModifers::testFinal, Php::Final)
+            )
+        );
+        extension.add(std::move( Php::Class<TestBaseClass::EmptyClass>("TestBaseClass\\TestAbstract", Php::Abstract) ) );
+        extension.add(std::move( Php::Class<TestBaseClass::EmptyClass>("TestBaseClass\\TestFinal", Php::Final) ) );
+
+        // Inheritance
+        Php::Interface TestInterface("TestBaseClass\\TestInterface");
+        extension.add(std::move( TestInterface.method("myMethod", {
+                Php::ByVal("value", Php::Type::String, true) 
+            })
+        ));
+
+        extension.add(std::move(
+            Php::Class<TestBaseClass::EmptyClass>("TestBaseClass\\TestImplInterf1")
+                .implements(TestInterface)
+            )
+        );
+
+        Php::Class<TestBaseClass::TestImplInterf2> TestImplInterf2("TestBaseClass\\TestImplInterf2");
+        extension.add(std::move( 
+            TestImplInterf2
+                .implements(TestInterface)
+                .method("myMethod", &TestBaseClass::TestImplInterf2::method, {
+                    Php::ByVal("value", Php::Type::String, true) 
+                })
+            )
+        );
+
+        extension.add(std::move(
+            Php::Class<TestBaseClass::EmptyClass>("TestBaseClass\\TestImplInterf3")
+                .extends(TestImplInterf2)
+            )
+        );
+
+
+
+
+
+        /*
+        // register our own class
+        Php::Class<MyClass> myClass("MyClass");
+        
+        // from PHP user space scripts, it must look like the myClass implements
+        // the MyInterface interface
+        myClass.implements(myInterface);
+        
+        // the interface requires that the myMethod method is implemented
+        myClass.method("myMethod", &MyClass::myMethod, {
+            Php::ByVal("value", Php::Type::String, true) 
+        });
+        */
+
+
 
 
 

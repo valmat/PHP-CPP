@@ -9,9 +9,17 @@
 
 
 
+echo new ReflectionClass('TestBaseClass\TestImplInterf3'), PHP_EOL;
+
+class TestImplInterf4 extends TestBaseClass\TestImplInterf2 {}
+echo new ReflectionClass('TestImplInterf4'), PHP_EOL;
 
 
 
+
+
+exit;
+//------------------------------------------------------------------------
 echo "\x1b[1;31m";
 (new ReflectionExtension('extension_for_tests') )->info();
 echo "\x1b[0m";
