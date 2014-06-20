@@ -98,10 +98,8 @@ extern "C"
 
         // Inheritance
         Php::Interface TestInterface("TestBaseClass\\TestInterface");
-        extension.add(std::move( TestInterface.method("myMethod", {
-                Php::ByVal("value", Php::Type::String, true) 
-            })
-        ));
+        TestInterface.method("myMethod", {Php::ByVal("value", Php::Type::String, true) });
+        extension.add(TestInterface);
 
         extension.add(std::move(
             Php::Class<TestBaseClass::EmptyClass>("TestBaseClass\\TestImplInterf1")
@@ -110,14 +108,11 @@ extern "C"
         );
 
         Php::Class<TestBaseClass::TestImplInterf2> TestImplInterf2("TestBaseClass\\TestImplInterf2");
-        extension.add(std::move( 
-            TestImplInterf2
-                .implements(TestInterface)
-                .method("myMethod", &TestBaseClass::TestImplInterf2::method, {
-                    Php::ByVal("value", Php::Type::String, true) 
-                })
-            )
-        );
+        TestImplInterf2.implements(TestInterface);
+        TestImplInterf2.method("myMethod", &TestBaseClass::TestImplInterf2::method, {
+            Php::ByVal("value", Php::Type::String, true) 
+        });
+        extension.add(TestImplInterf2);
 
         extension.add(std::move(
             Php::Class<TestBaseClass::EmptyClass>("TestBaseClass\\TestImplInterf3")

@@ -9,6 +9,7 @@
 
 
 
+echo new ReflectionClass('TestBaseClass\TestImplInterf2'), PHP_EOL, PHP_EOL;
 echo new ReflectionClass('TestBaseClass\TestImplInterf3'), PHP_EOL;
 
 class TestImplInterf4 extends TestBaseClass\TestImplInterf2 {}
